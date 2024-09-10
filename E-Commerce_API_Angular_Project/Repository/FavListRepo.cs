@@ -24,14 +24,40 @@ namespace E_Commerce_API_Angular_Project.Repository
             await _EcommContext.SaveChangesAsync();
         }
 
-        public Task<favList> GetFavListByUserID(int userID)
+        public async Task<favList> GetFavListByUserID(int userID)
         {
-            throw new NotImplementedException();
+            return await _EcommContext.FavLists
+                .Include(f=> f.favListItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(f => f.userId == userID);
         }
 
-        public Task<favList> GetSortedFavList(int userId, string sortBy)
+        public async Task<favList> GetSortedFavList(int userId, string sortBy)
         {
-            throw new NotImplementedException();
+            var favList = await _EcommContext.FavLists
+                .Include(f => f.favListItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(f => f.userId == userId);
+            if (favList == null)
+            {
+                return null;
+            }
+            var SortedItems = favList.favListItems.AsQueryable();
+            switch (sortBy.ToLower())
+            {
+                case "price":
+                    SortedItems = SortedItems.OrderBy(i => i.Product.Price);
+                    break;
+                case "rating":
+                    SortedItems = SortedItems.OrderByDescending(i => i.Product.Reviews);
+                    break;
+                case "name":
+                    SortedItems = SortedItems.OrderBy(i => i.Product.Name);
+                    break;
+            }
+            favList.favListItems = SortedItems.ToList(); 
+            return favList;
+
         }
     }
 }
