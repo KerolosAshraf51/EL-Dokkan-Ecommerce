@@ -1,5 +1,6 @@
 ﻿using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce_API_Angular_Project.Repository
 {
@@ -12,39 +13,51 @@ namespace E_Commerce_API_Angular_Project.Repository
             this.context = _context;
         }
 
-        public void Add(Category obj)
+        public void Add(Category category)
         {
-            throw new NotImplementedException();
+            context.Add(category);
+
         }
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            Category category = GetById(id);
+            context.Categories.Remove(category);
         }
 
         public List<Category> GetAll()
         {
-            throw new NotImplementedException();
+            return context.Categories
+               .Include("Products")
+               .Include("Brands")
+               .ToList();
         }
 
         public Category GetById(int id)
         {
-            throw new NotImplementedException();
+            return context.Categories
+                .Include("Products")
+                .Include("Brands")
+                .FirstOrDefault(c => c.Id == id);
         }
 
         public Category GetByName(string name)
         {
-            throw new NotImplementedException();
+            return context.Categories
+               .Include("Products")
+                .Include("Brands")
+                .FirstOrDefault(c => c.Name == name);
+        }
+        public void Update(Category category)
+        {
+            context.Update(category);
+
         }
 
         public void Save()
         {
-            throw new NotImplementedException();
+            context.SaveChanges();
         }
 
-        public void Update(Category obj)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
