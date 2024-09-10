@@ -23,7 +23,7 @@ namespace E_Commerce_API_Angular_Project.Repository
             _EcommContext.FavLists.Add(favList);
             await _EcommContext.SaveChangesAsync();
         }
-8
+
         public Task<favList> GetFavListByUserID(int userID)
         {
             throw new NotImplementedException();
