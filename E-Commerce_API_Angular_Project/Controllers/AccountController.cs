@@ -34,9 +34,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 user.UserName=UserFromRequest.UserName;
                 user.Email = UserFromRequest.Email;
                 user.Address = UserFromRequest.Address;
+                user.PhoneNumber = UserFromRequest.Phone;
+                user.profileImageURL = UserFromRequest.profileImageURL;
 
                 IdentityResult result=
                     await userManager.CreateAsync(user, UserFromRequest.Password);       
+                
                 if (result.Succeeded)
                 {
                     return Ok("Created successfully");
