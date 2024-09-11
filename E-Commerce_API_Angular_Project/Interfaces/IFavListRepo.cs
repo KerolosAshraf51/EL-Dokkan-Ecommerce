@@ -7,5 +7,6 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         Task<favList> GetFavListByUserID(int userID);
         Task CreateFavList(int userID);
         Task<favList> GetSortedFavList(int userId, string sortBy);
+
     }
 }
