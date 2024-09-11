@@ -10,7 +10,7 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least one.")]
         public int Quantity { get; set; }
-
+        //asdasd
         // Relationships
 
         [ForeignKey("Cart")]
