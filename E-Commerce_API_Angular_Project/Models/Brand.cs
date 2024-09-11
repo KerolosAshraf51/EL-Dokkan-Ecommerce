@@ -1,4 +1,6 @@
-﻿namespace E_Commerce_API_Angular_Project.Models
+﻿using System.Text.Json.Serialization;
+
+namespace E_Commerce_API_Angular_Project.Models
 {
     public class Brand
     {
@@ -6,9 +8,10 @@
         public string Name { get; set; }
 
         //Relations 
-       public List<Category> categories { get; set; } //samsung (mob +lab..etc)
+       public List<Category>? categories { get; set; } //samsung (mob +lab..etc)
 
-       public List<Product> products { get; set; }
+        [JsonIgnore]
+        public List<Product>? products { get; set; }
 
     }
 }
