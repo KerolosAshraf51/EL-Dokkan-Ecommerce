@@ -1,7 +1,11 @@
-﻿using E_Commerce_API_Angular_Project.IRepository;
+﻿using E_Commerce_API_Angular_Project.DTO;
+using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_Commerce_API_Angular_Project.Controllers
 {
@@ -10,19 +14,71 @@ namespace E_Commerce_API_Angular_Project.Controllers
     public class AppUserController : ControllerBase
     {
         private readonly IAppUserRepo appUser;
+        private readonly UserManager<appUser> userManager;
 
-        public AppUserController(IAppUserRepo _appuser)
+        public AppUserController(IAppUserRepo _appuser , UserManager<appUser> userManager)
         {
             appUser = _appuser;
+            this.userManager = userManager;
         }
 
         //****************Actions for any AppUser****************
 
         // view profile 
 
+        [Authorize]
+        [HttpGet("ViewProfile")]//Get api/AppUser/ViewProfile
+        public ActionResult ViewProfile()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
+            var user = appUser.GetById(int.Parse(userId.Value));
+
+            profileDTO userData = new profileDTO();
+
+            userData.UserName = user.UserName;
+            userData.Email = user.Email;
+            userData.Phone = user.PhoneNumber;
+            userData.Address = user.Address;
+            userData.profileImageURL = user.profileImageURL;
+
+            return Ok(userData);
+
+        }
+
         //Edit profile
 
+        [Authorize]
+        [HttpPost("EditProfile")]//Post api/AppUser/EditProfile
+        public ActionResult EditProfile(profileDTO data)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
+            var user = appUser.GetById(int.Parse(userId.Value));
+
+            user.UserName = data.UserName;
+            user.NormalizedUserName = data.UserName.ToUpper();
+            user.Email = data.Email;
+            user.NormalizedEmail = data.Email.ToUpper();
+            user.Address = data.Address;
+            user.profileImageURL = data.profileImageURL;
+            user.UpdatedAt= DateTime.Now;
+            
+            appUser.Update(user);
+            appUser.Save();
+
+            return Ok(user);
+        }
+
         //delete account
+
+        [Authorize]
+        [HttpGet("DeleteProfile")]//Get api/AppUser/DeleteProfile
+        public ActionResult DeleteProfile()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
+            appUser.Delete(int.Parse(userId.Value));
+            appUser.Save();
+            return Ok("deleted successfully");
+        }
 
 
         //****************Actions for client AppUser****************
