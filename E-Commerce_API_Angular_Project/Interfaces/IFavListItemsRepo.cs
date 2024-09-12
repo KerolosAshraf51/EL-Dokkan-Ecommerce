@@ -2,5 +2,7 @@
 {
     public interface IFavListItemsRepo
     {
+        void AddProductToFavList(int userId, int productId);
+        void RemoveProductFromFavList(int userId, int productId);
     }
 }

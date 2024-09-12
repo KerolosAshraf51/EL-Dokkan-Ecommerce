@@ -4,8 +4,9 @@ namespace E_Commerce_API_Angular_Project.Interfaces
 {
     public interface IFavListRepo
     {
-        Task<favList> GetFavListByUserID(int userID);
-        Task CreateFavList(int userID);
-        Task<favList> GetSortedFavList(int userId, string sortBy);
+        favList GetFavListByUserID(int userID);
+        void CreateFavList(favList favList);
+        List<favListItems> GetSortedFavList(int userId, string sortBy);
+
     }
 }

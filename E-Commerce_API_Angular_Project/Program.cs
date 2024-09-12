@@ -1,5 +1,5 @@
 
- using E_Commerce_API_Angular_Project.Interfaces;
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Models;
 using E_Commerce_API_Angular_Project.Repository;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Text;
 
 namespace E_Commerce_API_Angular_Project
@@ -20,7 +21,7 @@ namespace E_Commerce_API_Angular_Project
             // Add services to the container.
 
             builder.Services.AddControllers();
-
+        
             //------------
             builder.Services.AddDbContext<EcommContext>(options =>
             {
@@ -55,9 +56,8 @@ namespace E_Commerce_API_Angular_Project
             });
 
             builder.Services.AddScoped<IAppUserRepo,AppUserRepo>();
-            builder.Services.AddScoped<IProductRepo, ProductRepo>();
-            builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
-            builder.Services.AddScoped<IBrandRepo, BrandRepo>();
+            builder.Services.AddScoped<IFavListRepo, FavListRepo>();
+            builder.Services.AddScoped<IFavListItemsRepo, FavListItemsRepo>();
 
             #region Nourhan
             builder.Services.AddScoped<ICartRepo, CartRepo>();
@@ -83,6 +83,12 @@ namespace E_Commerce_API_Angular_Project
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //-----------------------
+            #region shaimaa
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            #endregion
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -92,7 +98,7 @@ namespace E_Commerce_API_Angular_Project
                 app.UseSwaggerUI();
             }
 
-
+            //app.UseStaticFiles();
             app.UseCors("MyPolicy");
 
             app.UseAuthorization();
