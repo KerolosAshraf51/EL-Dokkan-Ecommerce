@@ -21,7 +21,7 @@ namespace E_Commerce_API_Angular_Project
             // Add services to the container.
 
             builder.Services.AddControllers();
-
+        
             //------------
             builder.Services.AddDbContext<EcommContext>(options =>
             {
@@ -79,6 +79,12 @@ namespace E_Commerce_API_Angular_Project
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //-----------------------
+            #region shaimaa
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            #endregion
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -88,7 +94,7 @@ namespace E_Commerce_API_Angular_Project
                 app.UseSwaggerUI();
             }
 
-
+            //app.UseStaticFiles();
             app.UseCors("MyPolicy");
 
             app.UseAuthorization();

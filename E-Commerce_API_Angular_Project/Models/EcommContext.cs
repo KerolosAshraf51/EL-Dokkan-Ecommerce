@@ -31,6 +31,7 @@ namespace E_Commerce_API_Angular_Project.Models
         public DbSet<productImage> productImages {  get; set; }
         public DbSet<productImageList> productImageLists { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
 

@@ -4,6 +4,7 @@ using E_Commerce_API_Angular_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce_API_Angular_Project.Migrations
 {
     [DbContext(typeof(EcommContext))]
-    partial class EcommContextModelSnapshot : ModelSnapshot
+    [Migration("20240911042119_sha1")]
+    partial class sha1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,7 +132,13 @@ namespace E_Commerce_API_Angular_Project.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsCanceled")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("OrderDate")
@@ -141,20 +150,17 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.Property<double>("TotalAmount")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("paymentId")
+                    b.Property<int>("cartId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("paymentId");
+                    b.HasIndex("cartId");
 
                     b.ToTable("Orders");
                 });
@@ -649,11 +655,13 @@ namespace E_Commerce_API_Angular_Project.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_Commerce_API_Angular_Project.Models.Payment", "Payment")
+                    b.HasOne("E_Commerce_API_Angular_Project.Models.Cart", "Cart")
                         .WithMany()
-                        .HasForeignKey("paymentId");
+                        .HasForeignKey("cartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Payment");
+                    b.Navigation("Cart");
 
                     b.Navigation("User");
                 });
@@ -680,7 +688,7 @@ namespace E_Commerce_API_Angular_Project.Migrations
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.Payment", b =>
                 {
                     b.HasOne("E_Commerce_API_Angular_Project.Models.Order", "Order")
-                        .WithMany()
+                        .WithMany("Payments")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -856,6 +864,8 @@ namespace E_Commerce_API_Angular_Project.Migrations
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.Product", b =>
