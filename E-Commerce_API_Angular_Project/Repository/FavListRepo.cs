@@ -12,36 +12,36 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             _EcommContext = ecommContext;
         }
-        public async Task CreateFavList(int userID)
-        {
-            var favList = new favList
-            {
-                userId = userID,
-                favListItems = new List<favListItems>()
 
-            };
+        public void CreateFavList(favList favList)
+        {
+
             _EcommContext.FavLists.Add(favList);
-            await _EcommContext.SaveChangesAsync();
-        }
+            _EcommContext.SaveChanges();
 
-        public async Task<favList> GetFavListByUserID(int userID)
+        }
+        public favList GetFavListByUserID(int userID)
         {
-            return await _EcommContext.FavLists
+            return  _EcommContext.FavLists
                 .Include(f=> f.favListItems)
                 .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(f => f.userId == userID);
+                .FirstOrDefault(f => f.userId == userID);
+
+            
         }
 
-        public async Task<favList> GetSortedFavList(int userId, string sortBy)
+        public List<favListItems> GetSortedFavList(int userId, string sortBy)
         {
-            var favList = await _EcommContext.FavLists
+            var favList = _EcommContext.FavLists
                 .Include(f => f.favListItems)
                 .ThenInclude(i => i.Product)
-                .FirstOrDefaultAsync(f => f.userId == userId);
+                .FirstOrDefault(f => f.userId == userId);
+
             if (favList == null)
             {
-                return null;
+                return new List<favListItems>(); // عشان فاضيه فاهترجع ليست فاضيه (كانها صفحه فاضيه مش هيتعمل عليها اي سورت 
             }
+
             var SortedItems = favList.favListItems.AsQueryable();
             switch (sortBy.ToLower())
             {
@@ -54,10 +54,15 @@ namespace E_Commerce_API_Angular_Project.Repository
                 case "name":
                     SortedItems = SortedItems.OrderBy(i => i.Product.Name);
                     break;
+                //default:
+                //    throw new ArgumentException("Invalid sorting parameter.");
             }
-            favList.favListItems = SortedItems.ToList(); 
-            return favList;
+            return SortedItems.ToList(); //
+
 
         }
+
+       
+       
     }
 }

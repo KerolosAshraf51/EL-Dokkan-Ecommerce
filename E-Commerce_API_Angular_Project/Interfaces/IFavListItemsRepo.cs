@@ -2,7 +2,7 @@
 {
     public interface IFavListItemsRepo
     {
-        Task AddProductToFavList(int userId, int productId);
-        Task RemoveProductFromFavList(int userId, int productId);
+        void AddProductToFavList(int userId, int productId);
+        void RemoveProductFromFavList(int userId, int productId);
     }
 }
