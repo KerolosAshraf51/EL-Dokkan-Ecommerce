@@ -56,8 +56,16 @@ namespace E_Commerce_API_Angular_Project
             });
 
             builder.Services.AddScoped<IAppUserRepo,AppUserRepo>();
+
+
             builder.Services.AddScoped<IFavListRepo, FavListRepo>();
             builder.Services.AddScoped<IFavListItemsRepo, FavListItemsRepo>();
+
+
+            #region shaimaa
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            #endregion
 
             #region Nourhan
             builder.Services.AddScoped<ICartRepo, CartRepo>();
@@ -84,10 +92,7 @@ namespace E_Commerce_API_Angular_Project
             builder.Services.AddSwaggerGen();
 
             //-----------------------
-            #region shaimaa
-            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-            #endregion
+            
 
             var app = builder.Build();
 
