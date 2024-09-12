@@ -7,7 +7,7 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         public void Add(CartItem cartItem);
         public void Update(CartItem cartItem);
         public void Delete(int id);
-        public List<CartItem> GetAll();
+        public List<CartItem> GetAll(int cartId);
         public CartItem GetById(int id);
 
         public void Save();

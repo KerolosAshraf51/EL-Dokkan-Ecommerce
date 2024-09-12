@@ -59,7 +59,11 @@ namespace E_Commerce_API_Angular_Project
             builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
             builder.Services.AddScoped<IBrandRepo, BrandRepo>();
 
+            #region Nourhan
+            builder.Services.AddScoped<ICartRepo, CartRepo>();
+            builder.Services.AddScoped<ICartItemRepo, CartItemRepo>();
 
+            #endregion
 
             //-------------------------------------------------
             builder.Services.AddCors(options =>
