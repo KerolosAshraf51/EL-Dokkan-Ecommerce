@@ -1,4 +1,5 @@
 ﻿using E_Commerce_API_Angular_Project.Interfaces;
+using E_Commerce_API_Angular_Project.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,36 +16,53 @@ namespace E_Commerce_API_Angular_Project.Controllers
             _favListItemsRepo = favListItemsRepo;
         }
 
-        [HttpPost("{userId}/add/{productId}")]
+        [HttpPost("AddProductToFavList")]
         public IActionResult AddProductToFavList(int userId, int productId)
         {
             try
             {
-                _favListItemsRepo.AddProductToFavList(userId, productId);
-                return Ok("Product added");
+                var favList = _favListItemsRepo.GetFavListByUserId(userId);
+                if (favList == null)
+                    return NotFound("Favorite list not found.");
+
+                var product = _favListItemsRepo.GetProductById(productId);
+                if (product == null)
+                    return NotFound("Product not found.");
+
+                
+
+                var favItem = new favListItems
+                {
+                    favlistId = favList.Id,
+                    ProductId = productId
+                };
+
+                _favListItemsRepo.AddProductToFavList(favItem);
+                return Ok("Product added to favorites.");
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        [HttpDelete("{userId}/remove/{productId}")]
+        [HttpDelete("RemoveProductFromFavList")]
 
         public IActionResult RemoveProductFromFavList(int userId, int productId)
         {
             try
             {
-                _favListItemsRepo.RemoveProductFromFavList(userId, productId);
-                return Ok("Product Removed");
+                var favItem = _favListItemsRepo.GetfavListItem(userId, productId);
+                if (favItem == null)
+                    return NotFound("Favorite item not found.");
+
+                _favListItemsRepo.RemoveProductFromFavList(favItem);
+                return Ok("Product removed from favorites.");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

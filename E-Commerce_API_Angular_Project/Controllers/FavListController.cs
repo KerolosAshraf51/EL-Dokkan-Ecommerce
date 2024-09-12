@@ -17,17 +17,17 @@ namespace E_Commerce_API_Angular_Project.Controllers
             _favListRepo = favListRepo;
         }
 
-        [HttpGet("{userId}")]
-        public IActionResult GetFavListByUserId(int userId )
+        [HttpGet("GetFavListByUserId")]
+        public IActionResult GetFavListByUserId(int userId)
         {
-            var favList = _favListRepo.GetFavListByUserID( userId );
+            var favList = _favListRepo.GetFavListByUserID(userId);
             if (favList == null)
             {
                 return NotFound("Favorites list not found.");
             }
             return Ok(favList);
         }
-        [HttpPost("{userId}")]
+        [HttpPost("CreateFavList")]
         public IActionResult CreateFavList(int userId)
         {
             var favList = new favList
@@ -39,7 +39,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(favList);
         }
 
-        [HttpGet("{userId}/sorted")]
+        [HttpGet("GetSortedFavList")]
         public IActionResult GetSortedFavList(int userId, string sortBy)
         {
             try
@@ -48,10 +48,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 return Ok(sortedFavList);
 
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");

@@ -7,27 +7,56 @@ namespace E_Commerce_API_Angular_Project.Repository
     public class FavListRepo : IFavListRepo
     {
         private readonly EcommContext _EcommContext;
+        public string Id { get; set; }
+
 
         public FavListRepo(EcommContext ecommContext)
         {
             _EcommContext = ecommContext;
+            Id = Guid.NewGuid().ToString();
         }
 
         public void CreateFavList(favList favList)
         {
 
             _EcommContext.FavLists.Add(favList);
-            _EcommContext.SaveChanges();
-
+            Save();
         }
         public favList GetFavListByUserID(int userID)
         {
-            return  _EcommContext.FavLists
-                .Include(f=> f.favListItems)
+            return _EcommContext.FavLists
+                .Include(f => f.favListItems)
                 .ThenInclude(i => i.Product)
                 .FirstOrDefault(f => f.userId == userID);
 
-            
+        }
+        
+        public favList GetfavListById(int id)
+        {
+            return _EcommContext.FavLists
+                .Include(f => f.favListItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefault(f => f.Id == id);
+        }
+        public void DeleteFavList(int id)
+        {
+           var favList = GetfavListById(id);
+            if (favList != null)
+            {
+                _EcommContext.FavLists.Remove(favList);
+                Save();
+            }
+        }
+
+        public void Save()
+        {
+            _EcommContext.SaveChanges();
+        }
+
+        public void UpdateFavList(favList favList)
+        {
+            _EcommContext.Update(favList);
+            Save();
         }
 
         public List<favListItems> GetSortedFavList(int userId, string sortBy)
@@ -54,15 +83,14 @@ namespace E_Commerce_API_Angular_Project.Repository
                 case "name":
                     SortedItems = SortedItems.OrderBy(i => i.Product.Name);
                     break;
-                //default:
-                //    throw new ArgumentException("Invalid sorting parameter.");
+                    //default:
+                    //    throw new ArgumentException("Invalid sorting parameter.");
             }
             return SortedItems.ToList(); //
 
 
         }
 
-       
-       
+      
     }
 }
