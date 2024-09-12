@@ -55,6 +55,7 @@ namespace E_Commerce_API_Angular_Project
                 };
             });
 
+
             builder.Services.AddScoped<IAppUserRepo,AppUserRepo>();
 
             builder.Services.AddScoped<IProductRepo, ProductRepo>();
