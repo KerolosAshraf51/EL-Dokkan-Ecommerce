@@ -7,20 +7,20 @@ namespace E_Commerce_API_Angular_Project.Repository
     public class FavListRepo : IFavListRepo
     {
         private readonly EcommContext _EcommContext;
-        public string Id { get; set; }
+       
 
 
         public FavListRepo(EcommContext ecommContext)
         {
             _EcommContext = ecommContext;
-            Id = Guid.NewGuid().ToString();
+            
         }
 
         public void CreateFavList(favList favList)
         {
 
             _EcommContext.FavLists.Add(favList);
-            Save();
+           
         }
         public favList GetFavListByUserID(int userID)
         {
@@ -44,7 +44,7 @@ namespace E_Commerce_API_Angular_Project.Repository
             if (favList != null)
             {
                 _EcommContext.FavLists.Remove(favList);
-                Save();
+                
             }
         }
 
@@ -56,7 +56,7 @@ namespace E_Commerce_API_Angular_Project.Repository
         public void UpdateFavList(favList favList)
         {
             _EcommContext.Update(favList);
-            Save();
+           
         }
 
         public List<favListItems> GetSortedFavList(int userId, string sortBy)

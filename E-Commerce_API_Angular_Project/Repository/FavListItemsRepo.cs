@@ -8,12 +8,12 @@ namespace E_Commerce_API_Angular_Project.Repository
     public class FavListItemsRepo : IFavListItemsRepo
     {
         private readonly EcommContext _EcommContext;
-        public string Id { get; set; }
+        
 
         public FavListItemsRepo(EcommContext ecommContext)
         {
             _EcommContext = ecommContext;
-            Id = Guid.NewGuid().ToString();
+            
 
         }
 
@@ -21,13 +21,13 @@ namespace E_Commerce_API_Angular_Project.Repository
         public void AddProductToFavList(favListItems favItem)
         {
             _EcommContext.favListItems.Add(favItem);
-            Save();
+            
         }
 
         public void RemoveProductFromFavList(favListItems favItem)
         {
             _EcommContext.favListItems.Remove(favItem);
-            Save();
+           
         }
 
 
