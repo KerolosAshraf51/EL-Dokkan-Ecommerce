@@ -21,12 +21,14 @@ namespace E_Commerce_API_Angular_Project.Repository
         public void AddProductToFavList(favListItems favItem)
         {
             _EcommContext.favListItems.Add(favItem);
+            Save();
             
         }
 
         public void RemoveProductFromFavList(favListItems favItem)
         {
             _EcommContext.favListItems.Remove(favItem);
+            Save();
            
         }
 
@@ -97,10 +99,10 @@ namespace E_Commerce_API_Angular_Project.Repository
                 .FirstOrDefault(f => f.userId == userId);
         }
 
-        public Product GetProductById(int productId)
-        {
-            return _EcommContext.Products.Find(productId);
-        }
+        //public Product GetProductById(int productId)
+        //{
+        //    return _EcommContext.Products.Find(productId);
+        //}
 
         public void Save()
         {
@@ -112,6 +114,49 @@ namespace E_Commerce_API_Angular_Project.Repository
             _EcommContext.Update(favListItems);
         }
 
-       
+
+        //public List<favListItems> GetSortedFavList(int userId, string sortBy)
+        //{
+        //    var favList = _EcommContext.FavLists
+        //        .Include(f => f.favListItems)
+        //        .ThenInclude(i => i.Product)
+        //        .FirstOrDefault(f => f.userId == userId);
+
+        //    if (favList == null)
+        //    {
+        //        return new List<favListItems>(); // عشان فاضيه فاهترجع ليست فاضيه (كانها صفحه فاضيه مش هيتعمل عليها اي سورت 
+        //    }
+
+        //    var SortedItems = favList.favListItems.AsQueryable();
+        //    switch (sortBy.ToLower())
+        //    {
+        //        case "price":
+        //            SortedItems = SortedItems.OrderBy(i => i.Product.Price);
+        //            break;
+        //        case "rating":
+        //            SortedItems = SortedItems.OrderByDescending(i => i.Product.Reviews);
+        //            break;
+        //        case "name":
+        //            SortedItems = SortedItems.OrderBy(i => i.Product.Name);
+        //            break;
+        //            //default:
+        //            //    throw new ArgumentException("Invalid sorting parameter.");
+        //    }
+        //    return SortedItems.ToList(); //
+
+
+
+        //}
+        public List<favListItems> GetAllItemsInFavList(int userId)
+        {
+            var favList = _EcommContext.FavLists
+                .Include(f => f.favListItems)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefault(f => f.userId == userId);
+
+            return favList?.favListItems ?? new List<favListItems>();
+        }
+
+
     }
 }

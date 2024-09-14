@@ -17,43 +17,43 @@ namespace E_Commerce_API_Angular_Project.Controllers
             _favListRepo = favListRepo;
         }
 
-        [HttpGet("GetFavListByUserId")]
-        public IActionResult GetFavListByUserId(int userId)
+       
+        [HttpPost("CreateFavList")]
+        public IActionResult CreateFavList(int userId)
         {
-            var favList = _favListRepo.GetFavListByUserID(userId);
+            var existingFavList = _favListRepo.GetFavListByUserID(userId);
+            if (existingFavList != null)
+            {
+                return BadRequest("A favorite list already exists for this user.");
+            }
+
+            var favList = new favList
+            {
+                userId = userId,
+                favListItems = new List<favListItems>()
+            };
+
+            _favListRepo.CreateFavList(favList);
+            
+
+            return Ok(favList);
+        }
+
+
+        [HttpGet("GetFavListByUserId")]
+        public IActionResult GetFavListByUserId(int userID)
+        {
+            var favList = _favListRepo.GetFavListByUserID(userID);
             if (favList == null)
             {
                 return NotFound("Favorites list not found.");
             }
             return Ok(favList);
         }
-        [HttpPost("CreateFavList")]
-        public IActionResult CreateFavList(int userId)
-        {
-            var favList = new favList
-            {
-                userId = userId,
-                favListItems = new List<favListItems>()
-            };
-            _favListRepo.CreateFavList(favList);
-            return Ok(favList);
-        }
 
-        [HttpGet("GetSortedFavList")]
-        public IActionResult GetSortedFavList(int userId, string sortBy)
-        {
-            try
-            {
-                var sortedFavList = _favListRepo.GetSortedFavList(userId, sortBy);
-                return Ok(sortedFavList);
 
-            }
-            
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+
+        
 
     }
 }
