@@ -7,7 +7,6 @@ namespace E_Commerce_API_Angular_Project.Interfaces
     {
        public favList GetFavListByUserID(int userID);
         public void CreateFavList(favList favList);
-        public List<favListItems> GetSortedFavList(int userId, string sortBy);
         public favList GetfavListById(int id);
         
         public void UpdateFavList(favList favList);
