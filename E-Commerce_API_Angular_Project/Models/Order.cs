@@ -27,12 +27,9 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [Range(0.01, double.MaxValue, ErrorMessage = "Total amount must be greater than zero.")]
         public double TotalAmount { get; set; }
-
+        public string PaymentMethod { get; set; }
         public OrderStatus Status { get; set; }
-
-        //public bool IsPaid { get; set; }
-        //public bool IsCanceled { get; set; }
-       // public bool IsDeleted { get; set; } // For soft delete
+        public bool IsDeleted { get; set; }
 
         // Relationships
 

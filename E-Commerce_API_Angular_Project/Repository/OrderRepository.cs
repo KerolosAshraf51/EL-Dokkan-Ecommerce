@@ -4,6 +4,11 @@ using E_Commerce_API_Angular_Project.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Net;
+//using MailKit.Net.Smtp;
+using MimeKit;
+
 
 namespace E_Commerce_API_Angular_Project.Repository
 {
@@ -13,43 +18,19 @@ namespace E_Commerce_API_Angular_Project.Repository
        
         public OrderRepository(EcommContext context)
         {
-            _context = context;
-            
+            _context = context;           
         }
 
         public Order GetOrderById(int orderId)
         {
-            var order =  _context.Orders
-                .Include(o => o.OrderItems)
-               .Include(o=>o.User)
-                .FirstOrDefault(o => o.Id == orderId);
-
+            //var order =  _context.Orders
+            //    .Include(o => o.OrderItems)
+            //   .Include(o=>o.User)
+            //    .FirstOrDefault(o => o.Id == orderId);
+            var order = _context.Orders
+            .Include(o => o.OrderItems)           
+            .FirstOrDefault(o => o.Id == orderId);
             if (order == null) return null;
-
-            //OrderDTO orderDTO = new OrderDTO
-            //{
-            //    OrderId = order.Id,
-            //    UserId = order.UserId,
-            //    OrderDate = order.OrderDate,
-            //    TotalAmount = order.TotalAmount,
-            //    Status = order.Status,
-            //    IsPaid = order.IsPaid,
-            //    OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
-            //    {
-            //        OrderItemId = oi.Id,
-            //        ProductId = oi.ProductId,
-            //        Quantity = oi.Quantity,
-            //        Price = oi.PriceAtPurchase
-            //    }).ToList(),
-            //    Payments = order.Payments.Select(p => new PaymentDTO
-            //    {
-            //        PaymentId = p.Id,
-            //        Amount = p.Amount,
-            //        PaymentMethod = p.PaymentMethod,
-            //        PaymentDate = p.PaymentDate,
-            //        IsSuccessful = p.IsSuccessful
-            //    }).ToList() // Map payments
-            //};
             return order;
         }
 
@@ -60,53 +41,20 @@ namespace E_Commerce_API_Angular_Project.Repository
                  .Include (o=>o.User)
                 .ToList();
             return orders;
-
-            //return (List<Order>)orders.Select(order => new OrderDTO
-            //{
-            //    OrderId = order.Id,
-            //    UserId = order.UserId,
-            //    OrderDate = order.OrderDate,
-            //    TotalAmount = order.TotalAmount,
-            //    Status = order.Status,
-               
-            //    OrderItems = order.OrderItems.Select(oi => new OrderItemDTO
-            //    {
-            //        OrderItemId = oi.Id,
-            //        ProductId = oi.ProductId,
-            //        Quantity = oi.Quantity,
-            //        Price = oi.PriceAtPurchase
-            //    }).ToList(),
-                
-            //});
         }
-
+        public List<Order> GetOrdersByUserId(int userId)
+        {
+             appUser user = _context.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == userId);
+             List<Order> orders = user.Orders.ToList();
+            foreach (var order in orders) 
+            {
+                order.OrderItems = _context.OrderItems.Where(o => o.OrderId==order.Id).ToList();                   
+            }
+            return orders;
+        }
         public void AddOrder(Order order)
         {
             _context.Add(order);
-           // Save();
-            //Order newOrder = new Order
-            //{
-            //    UserId = order.UserId,
-            //    OrderDate = DateTime.UtcNow,
-            //    TotalAmount = order.TotalAmount,
-            //    Status = order.Status,
-            //    IsPaid = order.IsPaid,
-            //    OrderItems = order.OrderItems.Select(oi => new OrderItem
-            //    {
-            //        ProductId = oi.ProductId,
-            //        Quantity = oi.Quantity,
-            //        PriceAtPurchase = oi.Price
-            //    }).ToList(),
-            //    Payments = orderDto.Payments.Select(p => new Payment
-            //    {
-            //        Amount = p.Amount,
-            //        PaymentMethod = p.PaymentMethod,
-            //        PaymentDate = DateTime.UtcNow,
-            //        IsSuccessful = true // Assuming the payment is successful upon adding
-            //    }).ToList() // Map payments
-            //};
-
-
         }
 
         public void UpdateOrder(Order _order)
@@ -135,10 +83,6 @@ namespace E_Commerce_API_Angular_Project.Repository
                     PriceAtPurchase = item.PriceAtPurchase
                 });
             }
-
-          
-
-
             Save();
         }
         public void DeleteOrder(int orderId)
@@ -159,22 +103,78 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             return _context.Products.FirstOrDefault(p => p.Id == orderItem.ProductId);
         }
-        public double TotalPriceOfOrder(int orderID)
+        public void CalculateTotal(Order order)
         {
-            Order order = _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefault(o => o.Id == orderID);
-            double total = 0;
-            foreach (var item in order.OrderItems)
+            if(order == null || order.OrderItems==null) return;
+            order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.PriceAtPurchase);
+        }
+        public Cart CancelOrder(int orderId)
+        {
+            Order order = GetOrderById(orderId);
+            order.Status = OrderStatus.Canceled;
+           //get cart by user id
+            Cart cart= _context.Carts.Include(c => c.CartItems).FirstOrDefault(c => c.UserId == order.UserId);
+            return cart;
+            ////clear cart  
+            //_context.CartItems.RemoveRange(cart.CartItems);
+            //Save();
+            ////fill cart with items of the canceld order
+            //List<CartItem> newCartItems = new List<CartItem>();
+            //foreach(var item in order.OrderItems)
+            //{
+            //    CartItem cartItem = new CartItem();
+            //    cartItem.CartId = cart.Id;
+            //    cartItem.Quantity = item.Quantity;
+            //    cartItem.ProductId = item.ProductId;
+            //    newCartItems.Add(cartItem);
+            //}
+            //cart.CartItems = newCartItems;
+            //Save();
+        }
+        public void sendMail(int orderId, string userMail)
+        {
+            var smtpClient = new SmtpClient("smtp.gmail.com")
             {
-                total += (item.Quantity * item.PriceAtPurchase);
+                Port = 587,
+                Credentials = new NetworkCredential("shaimafarag123@gmail.com", "praisebetogod"),
+                EnableSsl = true,
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress("shaimafarag123@gmail.com"),
+                Subject = "Test Email",
+                Body = $"Your Order Id : {orderId}",
+                IsBodyHtml = true,
+            };
+            mailMessage.To.Add(userMail);
+
+            try
+            {
+                smtpClient.Send(mailMessage);
+               // Console.WriteLine("Email sent successfully!");
             }
-            return total;
+            catch (Exception ex)
+            {
+                throw new Exception($"{ex}");
+            }
         }
-        private bool ValidatePayment(PaymentDTO payment)
-        {
-            // Implement payment validation logic
-            return true; // Simplified for example
-        }
+        //public double TotalPriceOfOrder(int orderID)
+        //{
+        //    Order order = _context.Orders
+        //        .Include(o => o.OrderItems)
+        //        .FirstOrDefault(o => o.Id == orderID);
+        //    double total = 0;
+        //    foreach (var item in order.OrderItems)
+        //    {
+        //        total += (item.Quantity * item.PriceAtPurchase);
+        //    }
+        //    return total;
+        //}
+        //private bool ValidatePayment(PaymentDTO payment)
+        //{
+        //    // Implement payment validation logic
+        //    return true; // Simplified for example
+        //}
     }
 }
