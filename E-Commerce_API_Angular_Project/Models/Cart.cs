@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace E_Commerce_API_Angular_Project.Models
 {
@@ -12,6 +13,8 @@ namespace E_Commerce_API_Angular_Project.Models
         // Relationships
         [ForeignKey("User")]
         public int UserId { get; set; }
+
+        [JsonIgnore]
         public appUser? User { get; set; }
         public List<CartItem>? CartItems { get; set; }
     }
