@@ -1,10 +1,12 @@
-﻿using E_Commerce_API_Angular_Project.DTO;
+﻿using Azure.Core;
+using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Crypto.Generators;
 using System.Security.Claims;
 
 namespace E_Commerce_API_Angular_Project.Controllers
@@ -80,6 +82,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok("deleted successfully");
         }
 
+
+       
 
         //****************Actions for client AppUser****************
 
