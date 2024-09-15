@@ -49,7 +49,23 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(orderItem);
             
         }
+        //[HttpPost]
+        //[Route("CreateOrderItemsFromCartItems")]
+        //public IActionResult CreateOrderItemsFromCartItems(CheckoutDTO checkoutDTO)
+        //{
+        //    foreach(var item in checkoutDTO.cartItems)
+        //    {
+        //         OrderItem orderItem = new OrderItem();
+        //        orderItem.OrderId = checkoutDTO.orderID;
+        //        orderItem.ProductId= item.ProductId;
+        //        orderItem.PriceAtPurchase = item.Product.Price;
+        //        orderItem.Quantity = item.Quantity;
+        //         _orderItemRepository.AddOrderItem(orderItem);
+        //            _orderItemRepository.Save();
+        //    }
+        //     return Ok();
 
+        //}
         //[HttpPut("{id}")]
         //public IActionResult UpdateOrderItem(int id, OrderItemDTO orderItemDto)
         //{

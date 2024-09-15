@@ -6,6 +6,7 @@ using E_Commerce_API_Angular_Project.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using System.Text;
@@ -27,6 +28,8 @@ namespace E_Commerce_API_Angular_Project
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
             });
+            //builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
             //---------------------------------------------------------------
 
             builder.Services.AddIdentity<appUser, IdentityRole<int>>()
@@ -121,7 +124,7 @@ namespace E_Commerce_API_Angular_Project
             app.UseAuthorization();
 
             app.MapControllers();
-
+       
             app.Run();
         }
     }
