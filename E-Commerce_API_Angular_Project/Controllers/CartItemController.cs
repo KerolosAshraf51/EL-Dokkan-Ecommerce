@@ -29,6 +29,23 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(cartItem);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetCartItem(int id)
+        {
+            CartItem cartItem =CartItemRepo.GetById(id);
+            if (cartItem == null) return NotFound();
+
+            return Ok(cartItem);
+        }
+
+        [HttpGet("cart/{cartId}")]
+        public IActionResult GetOrderItemsByOrderId(int cartId)
+        {
+            List<CartItem> cartItems = CartItemRepo.GetAll(cartId);
+            return Ok(cartItems);
+        }
+
+
 
     }
 }
