@@ -7,6 +7,8 @@ using System.Security.Claims;
 using System.Text;
 using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Models;
+using E_Commerce_API_Angular_Project.IRepository;
+using E_Commerce_API_Angular_Project.Interfaces;
 
 namespace E_Commerce_API_Angular_Project.Controllers
 {
@@ -16,32 +18,45 @@ namespace E_Commerce_API_Angular_Project.Controllers
     {
         private readonly UserManager<appUser> userManager;
         private readonly IConfiguration config;
+        public IAppUserRepo AppUserRepo { get; set; }
+        public ICartRepo CartRepo { get; }
 
-        public AccountController(UserManager<appUser> UserManager,IConfiguration config)
+        public AccountController(UserManager<appUser> UserManager,
+                                 IConfiguration config,
+                                 IAppUserRepo appUserRepo,
+                                 ICartRepo cartRepo)
         {
             userManager = UserManager;
             this.config = config;
+            AppUserRepo = appUserRepo;
+            CartRepo = cartRepo;
         }
 
 
         [HttpPost("Register")]//Post api/Account/Register
-        public async Task<IActionResult> Register(RegisterDto UserFromRequest )
+        public async Task<IActionResult> Register(RegisterDto UserFromRequest)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 //save DB
                 appUser user = new appUser();
-                user.UserName=UserFromRequest.UserName;
+                user.UserName = UserFromRequest.UserName;
                 user.Email = UserFromRequest.Email;
                 user.Address = UserFromRequest.Address;
                 user.PhoneNumber = UserFromRequest.Phone;
                 user.profileImageURL = UserFromRequest.profileImageURL;
 
-                IdentityResult result=
-                    await userManager.CreateAsync(user, UserFromRequest.Password);       
-                
+                IdentityResult result =
+                    await userManager.CreateAsync(user, UserFromRequest.Password);
+
+              
+
+
                 if (result.Succeeded)
                 {
+                    //create cart for user 
+                   // var userId = AppUserRepo.
+
                     return Ok("Created successfully");
                 }
                 foreach (var item in result.Errors)
@@ -51,6 +66,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
             return BadRequest(ModelState);
         }
+
 
 
         [HttpPost("RegisterAsAdmin")]//Post api/Account/RegisterAsAdmin
@@ -87,11 +103,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
             if (ModelState.IsValid)
             {
                 //check
-                appUser userFromDb=
+                appUser userFromDb =
                     await userManager.FindByNameAsync(userFRomRequest.UserName);
-                if (userFromDb != null) {
+                if (userFromDb != null)
+                {
                     bool found =
-                        await userManager.CheckPasswordAsync(userFromDb, userFRomRequest.Password); ;
+                        await userManager.CheckPasswordAsync(userFromDb, userFRomRequest.Password);
                     if (found == true)
                     {
                         //generate token<==
@@ -99,22 +116,22 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         List<Claim> UserClaims = new List<Claim>();
 
                         //Token Genrated id change (JWT Predefind Claims )
-                        UserClaims.Add(new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()));
+                        UserClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
                         UserClaims.Add(new Claim(ClaimTypes.NameIdentifier, userFromDb.Id.ToString()));
                         UserClaims.Add(new Claim(ClaimTypes.Name, userFromDb.UserName));
 
-                        var UserRoles =await userManager.GetRolesAsync(userFromDb);
-                        
+                        var UserRoles = await userManager.GetRolesAsync(userFromDb);
+
                         foreach (var roleNAme in UserRoles)
                         {
                             UserClaims.Add(new Claim(ClaimTypes.Role, roleNAme));
                         }
 
-                        var SignInKey = 
+                        var SignInKey =
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                                 config["JWT:SecritKey"]));
 
-                        SigningCredentials signingCred = 
+                        SigningCredentials signingCred =
                             new SigningCredentials
                             (SignInKey, SecurityAlgorithms.HmacSha256);
 
@@ -122,7 +139,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         JwtSecurityToken mytoken = new JwtSecurityToken(
                             audience: config["JWT:AudienceIP"],
                             issuer: config["JWT:IssuerIP"],
-                            expires:DateTime.Now.AddHours(1),
+                            expires: DateTime.Now.AddHours(1),
                             claims: UserClaims,
                             signingCredentials: signingCred
 
@@ -131,8 +148,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
                         return Ok(new
                         {
-                            token=new JwtSecurityTokenHandler().WriteToken(mytoken),
-                            expiration=DateTime.Now.AddHours(1)//mytoken.ValidTo
+                            token = new JwtSecurityTokenHandler().WriteToken(mytoken),
+                            expiration = DateTime.Now.AddHours(1)//mytoken.ValidTo
                             //
                         });
                     }
@@ -141,5 +158,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
             return BadRequest(ModelState);
         }
+
+
+
+
     }
+
+
+
 }

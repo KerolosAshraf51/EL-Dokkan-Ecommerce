@@ -11,7 +11,7 @@ namespace E_Commerce_API_Angular_Project.Models
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Rating { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string Comment { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -20,10 +20,10 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public appUser User { get; set; }
+        public appUser? User { get; set; }
     }
 }

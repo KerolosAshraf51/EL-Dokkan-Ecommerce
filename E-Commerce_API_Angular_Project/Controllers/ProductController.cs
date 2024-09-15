@@ -71,5 +71,33 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return NoContent();
         }
 
+        [HttpGet("Search/{name:alpha}")]
+        public IActionResult SearchByName(string name) 
+        {
+            List<Product> products = productRepo.GetByName(name);
+            return Ok(products);
+        }
+
+        [HttpGet("Orderby/{str:alpha}")]
+        public IActionResult Orderby(string str) 
+        {
+            List<Product> products= productRepo.OrderBy(str);
+            return Ok(products);
+        }
+
+        [HttpGet("GetByCategory/{categoryId:int}")]
+        public IActionResult GetByCategory(int categoryId) 
+        {
+            List<Product> products = productRepo.GetByCategoryId(categoryId);
+            return Ok(products);
+        }
+
+        [HttpGet("GetByBrand/{brandId:int}")]
+        public IActionResult GetByBrand(int brandId)
+        {
+            List<Product> products = productRepo.GetByBrandId(brandId);
+            return Ok(products);
+        }
+
     }
 }

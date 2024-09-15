@@ -61,9 +61,16 @@ namespace E_Commerce_API_Angular_Project
 
             builder.Services.AddScoped<IAppUserRepo,AppUserRepo>();
 
+
+            #region peterKameel
             builder.Services.AddScoped<IProductRepo, ProductRepo>();
             builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
             builder.Services.AddScoped<IBrandRepo, BrandRepo>();
+            builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+
+            #endregion
+
+
 
 
             builder.Services.AddScoped<IFavListRepo, FavListRepo>();
