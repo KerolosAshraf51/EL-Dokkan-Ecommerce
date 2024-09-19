@@ -1,4 +1,5 @@
-﻿using E_Commerce_API_Angular_Project.Interfaces;
+﻿using E_Commerce_API_Angular_Project.DTO;
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,33 +12,50 @@ namespace E_Commerce_API_Angular_Project.Controllers
     public class FavListController : ControllerBase
     {
         private readonly IFavListRepo _favListRepo;
+        private readonly EcommContext _EcommContext;
 
-        public FavListController(IFavListRepo favListRepo)
+
+        public FavListController(IFavListRepo favListRepo, EcommContext ecommContext)
         {
             _favListRepo = favListRepo;
+            _EcommContext = ecommContext;
         }
 
-       
+
         [HttpPost("CreateFavList")]
-        public IActionResult CreateFavList(int userId)
+        public IActionResult CreateFavList(FavListDto favListDto)
         {
-            var existingFavList = _favListRepo.GetFavListByUserID(userId);
-            if (existingFavList != null)
-            {
-                return BadRequest("A favorite list already exists for this user.");
-            }
+            //var existingFavList = _favListRepo.GetFavListByUserID(userId);
+            //if (existingFavList != null)
+            //{
+            //    return BadRequest("A favorite list already exists for this user.");
+            //}
 
-            var favList = new favList
-            {
-                userId = userId,
-                //favListItems = new List<favListItems>() //created from item controller not here
-            };
 
-            _favListRepo.CreateFavList(favList);
-
-            
 
         }
+
+
+        //[HttpPost("CreateFavList")]
+        //public IActionResult CreateFavList(FavListDto favListDto)
+        //{
+        //    var user = _EcommContext.Users.FirstOrDefault(u => u.Id == favListDto.UserId);
+        //    if (user == null)
+        //    {
+        //        return BadRequest("User not found.");
+        //    }
+
+        //    var favList = new favList
+        //    {
+        //        userId = favListDto.UserId,
+        //        favListItems = new List<favListItems>()
+        //    };
+
+        //    _favListRepo.CreateFavList(favList);
+        //    _favListRepo.Save();
+
+        //    return Ok(favList);
+        //}
 
 
         [HttpGet("GetFavListByUserId")]

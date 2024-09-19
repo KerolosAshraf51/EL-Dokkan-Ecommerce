@@ -18,9 +18,9 @@ namespace E_Commerce_API_Angular_Project.Repository
 
         public void CreateFavList(favList favList)
         {
+            
 
             _EcommContext.FavLists.Add(favList);
-            Save();
 
         }
         public favList GetFavListByUserID(int userID)
