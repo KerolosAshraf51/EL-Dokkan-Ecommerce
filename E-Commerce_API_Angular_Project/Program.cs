@@ -75,6 +75,8 @@ namespace E_Commerce_API_Angular_Project
 
             builder.Services.AddScoped<IFavListRepo, FavListRepo>();
             builder.Services.AddScoped<IFavListItemsRepo, FavListItemsRepo>();
+            builder.Services.AddScoped<IMailRepo, MailRepo>();
+            builder.Services.AddScoped<IUserOtpRepo, UserOtpRepo>();
 
 
             #region shaimaa
@@ -98,6 +100,8 @@ namespace E_Commerce_API_Angular_Project
 
                 });
             });
+
+
 
 
             //---------------------------------------------------------------

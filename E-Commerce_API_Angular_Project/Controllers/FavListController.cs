@@ -30,13 +30,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
             var favList = new favList
             {
                 userId = userId,
-                favListItems = new List<favListItems>()
+                //favListItems = new List<favListItems>() //created from item controller not here
             };
 
             _favListRepo.CreateFavList(favList);
+
             
 
-            return Ok(favList);
         }
 
 
