@@ -1,5 +1,6 @@
 ﻿using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce_API_Angular_Project.Repository
 {
@@ -35,6 +36,31 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             context.SaveChanges();
         }
+
+
+
+
+        public bool IsEmailUnique(string email)
+        {
+            return !context.Users.Any(u => u.Email == email);
+        }
+
+
+        public int GenerateRandomOtp(int userId)
+        {
+            int length = 5;
+
+            Random random = new Random();
+            int minValue = (int)Math.Pow(10, length - 1);
+            int maxValue = (int)Math.Pow(10, length) - 1;
+
+            return random.Next(minValue, maxValue + 1); ;
+        }
+
+
+
+
+
 
     }
 }

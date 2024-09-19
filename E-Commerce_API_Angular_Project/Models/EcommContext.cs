@@ -34,9 +34,6 @@ namespace E_Commerce_API_Angular_Project.Models
         public DbSet<Payment> Payments { get; set; }
 
 
-
-
-
         public EcommContext(DbContextOptions<EcommContext> options):base(options)
         {
             

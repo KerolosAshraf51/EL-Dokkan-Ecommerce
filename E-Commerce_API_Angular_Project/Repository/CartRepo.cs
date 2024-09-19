@@ -57,6 +57,28 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             return context.Products.FirstOrDefault(p => p.Id == cartItem.ProductId);
         }
+
+        public void ClearCart(int cartId)
+        {
+           
+            var cart = context.Carts.Include(c => c.CartItems)
+                                     .FirstOrDefault(c => c.Id == cartId);
+            if (cart == null)
+                throw new ArgumentException("Cart not found.");
+
+            context.CartItems.RemoveRange(cart.CartItems);
+
+           
+            context.SaveChanges();
+        }
+
+        public Cart GetCartByUserId(int userId)
+        {
+          
+            return context.Carts.Include(c => c.CartItems)
+                               //  .ThenInclude(ci => ci.Product)
+                                 .FirstOrDefault(c => c.UserId == userId);
+        }
         public void Save()
         {
             context.SaveChanges();

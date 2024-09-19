@@ -15,5 +15,10 @@ namespace E_Commerce_API_Angular_Project.IRepository
         public void Save();
 
 
+        public bool IsEmailUnique(string email);
+        public int GenerateRandomOtp(int userId);
+
+
+
     }
 }
