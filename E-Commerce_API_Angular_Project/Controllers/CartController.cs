@@ -92,7 +92,19 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(cartWithCartItemsDtoList);
         }
 
+        [HttpGet("user/{userId}")]
+        public IActionResult GetCartByUserId(int userId)
+        {
+            
+            var cart =CartRepo.GetCartByUserId(userId);
 
+            
+            if (cart == null)
+                return NotFound(new { Message = "Cart not found for this user." });
+
+           
+            return Ok(cart);
+        }
 
 
         [HttpPut("{id}")]

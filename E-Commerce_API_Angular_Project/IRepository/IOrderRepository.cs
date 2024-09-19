@@ -9,11 +9,15 @@ namespace E_Commerce_API_Angular_Project.IRepository
        public Order GetOrderById(int orderId);
         //Task<IEnumerable<OrderDTO>> GetAllOrdersA();
        public List<Order> GetAllOrders();
-       public void AddOrder(Order order);
+        public List<Order> GetOrdersByUserId(int userId);
+        public void AddOrder(Order order);
        public void UpdateOrder(Order order);
        public void DeleteOrder(int orderId);
         public void Save();
         public Product GetProductByOrderItemId(OrderItem orderItem);
-        public double TotalPriceOfOrder(int orderID);
+        public void CalculateTotal(Order order);
+        public Cart CancelOrder(int orderId);
+        public void sendMail(int orderId, string userMail);
+        //public double TotalPriceOfOrder(int orderID);
     }
 }

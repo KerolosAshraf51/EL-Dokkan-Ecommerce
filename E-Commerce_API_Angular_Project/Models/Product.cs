@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace E_Commerce_API_Angular_Project.Models
 {
@@ -30,6 +31,7 @@ namespace E_Commerce_API_Angular_Project.Models
         public int BrandId { get; set; }
         public Brand? Brand { get; set; }
 
+        [JsonIgnore]
         public List<Review>? Reviews { get; set; }
     }
 }

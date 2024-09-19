@@ -4,6 +4,7 @@ using E_Commerce_API_Angular_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce_API_Angular_Project.Migrations
 {
     [DbContext(typeof(EcommContext))]
-    partial class EcommContextModelSnapshot : ModelSnapshot
+    [Migration("20240915041050_updatOrder_paymentMethod")]
+    partial class updatOrder_paymentMethod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,6 +131,9 @@ namespace E_Commerce_API_Angular_Project.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -297,30 +303,6 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.UserOtp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OTP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("userID");
-
-                    b.ToTable("userOtps");
-                });
-
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.appUser", b =>
                 {
                     b.Property<int>("Id")
@@ -335,6 +317,9 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -390,6 +375,8 @@ namespace E_Commerce_API_Angular_Project.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -746,15 +733,13 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.UserOtp", b =>
+            modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.appUser", b =>
                 {
-                    b.HasOne("E_Commerce_API_Angular_Project.Models.appUser", "user")
+                    b.HasOne("E_Commerce_API_Angular_Project.Models.Cart", "Cart")
                         .WithMany()
-                        .HasForeignKey("userID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CartId");
 
-                    b.Navigation("user");
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.favList", b =>
