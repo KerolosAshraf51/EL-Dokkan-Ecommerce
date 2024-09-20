@@ -11,17 +11,20 @@ namespace E_Commerce_API_Angular_Project.Controllers
     public class CartItemController : ControllerBase
     {
         ICartItemRepo CartItemRepo;
-
-        public CartItemController(ICartItemRepo cartItemRepo)
+        ICartRepo CartRepo;
+        public CartItemController(ICartItemRepo cartItemRepo, ICartRepo cartRepo)
         {
             CartItemRepo = cartItemRepo;
+            CartRepo = cartRepo;
         }
         [HttpPost]
         [Route("Create CartItem")]
         public ActionResult Create(CartItemsDto cartItemsDto)
         {
+            Cart cart=CartRepo.GetCartByUserId(cartItemsDto.UserId);
+
             CartItem cartItem = new CartItem();
-            cartItem.CartId = cartItemsDto.CartId;
+            cartItem.CartId = cart.Id; 
             cartItem.ProductId = cartItemsDto.ProductId;
             cartItem.Quantity = cartItemsDto.Quantity;
             CartItemRepo.Add(cartItem);
