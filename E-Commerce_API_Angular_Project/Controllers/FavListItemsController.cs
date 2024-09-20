@@ -1,4 +1,5 @@
-﻿using E_Commerce_API_Angular_Project.Interfaces;
+﻿
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
 using E_Commerce_API_Angular_Project.Repository;
 using Microsoft.AspNetCore.Http;
@@ -14,15 +15,15 @@ namespace E_Commerce_API_Angular_Project.Controllers
         IProductRepo _productRepo;
         IFavListRepo _favListItems;
 
-        public FavListItemsController(IFavListItemsRepo favListItemsRepo, IProductRepo productRepo,IFavListRepo favList)
+        public FavListItemsController(IFavListItemsRepo favListItemsRepo, IProductRepo productRepo, IFavListRepo favList)
         {
             _favListItemsRepo = favListItemsRepo;
-            _productRepo = productRepo; 
+            _productRepo = productRepo;
             _favListItems = favList;
         }
 
         [HttpPost("AddProductToFavList")]
-        public IActionResult AddProductToFavList(int userId, int productId )
+        public IActionResult AddProductToFavList(int userId, int productId)
         {
             try
             {
@@ -34,7 +35,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 if (product == null)
                     return NotFound("Product not found.");
 
-                
+
                 var existingFavItem = favList.favListItems.FirstOrDefault(i => i.ProductId == productId);
                 if (existingFavItem != null)
                 {
@@ -80,7 +81,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
-       
+
 
 
 
@@ -124,6 +125,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
 
+
         [HttpGet("GetAllItemsInFavList")]
         public IActionResult GetAllItemsInFavList(int userId)
         {
@@ -145,3 +147,10 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
     }
 }
+
+
+
+
+
+
+

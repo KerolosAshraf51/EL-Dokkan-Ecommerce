@@ -31,8 +31,23 @@ namespace E_Commerce_API_Angular_Project.Controllers
             //    return BadRequest("A favorite list already exists for this user.");
             //}
 
+            //var favList = new favList
+            //{
+            //    userId = userId,
+            //    favListItems = new List<favListItems>()
+            //};
+
+            //_favListRepo.CreateFavList(favList);
 
 
+            //return Ok(favList);
+
+            favList FavList = new favList();
+            FavList.userId = favListDto.UserId;
+            _favListRepo.CreateFavList(FavList);
+
+            _favListRepo.Save();
+            return Ok();
         }
 
 
@@ -71,7 +86,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
 
-        
+
 
     }
 }
