@@ -21,6 +21,7 @@ using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
 using static System.Net.WebRequestMethods;
+using E_Commerce_API_Angular_Project.Repository;
 
 //////////////////////
 
@@ -91,8 +92,25 @@ namespace E_Commerce_API_Angular_Project.Controllers
                          var userId =
                             (await userManager.FindByNameAsync(UserFromRequest.UserName)).Id;
 
-                        // CartRepo.createCart(userId);
-                        // FavListRepo.createFavList(userId);
+                        // create Cart for new user
+
+                        Cart cart = new Cart();
+                        cart.CreatedAt = DateTime.Now;
+                        cart.UpdatedAt = DateTime.Now;
+                        cart.UserId = userId;
+
+
+                        CartRepo.Add(cart);
+                        CartRepo.Save();
+                        //creat FavList for new user
+
+                        favList FavList = new favList();
+                        FavList.userId = userId;
+                        FavListRepo.CreateFavList(FavList);
+                        FavListRepo.Save();
+                      
+
+                        //=====================================
 
                         return Ok();
                     }

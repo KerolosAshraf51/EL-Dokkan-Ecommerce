@@ -1,4 +1,5 @@
-﻿using E_Commerce_API_Angular_Project.Interfaces;
+﻿using E_Commerce_API_Angular_Project.DTO;
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +60,9 @@ namespace E_Commerce_API_Angular_Project.Repository
             _EcommContext.Update(favList);
 
         }
+
+
+   
 
 
 
