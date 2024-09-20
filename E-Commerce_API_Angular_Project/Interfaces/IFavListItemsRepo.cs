@@ -5,7 +5,7 @@ namespace E_Commerce_API_Angular_Project.Interfaces
 {
     public interface IFavListItemsRepo
     {
-       public void AddProductToFavList(favListItems favItem);
+        public void AddProductToFavList(favListItems favItem);
         public void RemoveProductFromFavList(favListItems favItem);
         public favListItems GetfavListItem(int userId, int productId);
         public favList GetFavListByUserId(int userId);

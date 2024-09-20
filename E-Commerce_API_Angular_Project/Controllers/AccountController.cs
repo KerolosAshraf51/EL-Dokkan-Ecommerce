@@ -13,8 +13,6 @@ using E_Commerce_API_Angular_Project.Interfaces;
 //////////////////
 using System;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Util.Store;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MailKit.Security;
