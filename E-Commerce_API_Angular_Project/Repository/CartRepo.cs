@@ -17,6 +17,16 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             context.Add(cart);
         }
+        public void CreateCart(int userId)
+   
+        {
+            Cart cart = new Cart(); 
+            cart.UserId = userId;
+            context.Add(cart);
+            Save();
+
+
+        }
         public void Update(Cart cart)
         {
             context.Update(cart);
