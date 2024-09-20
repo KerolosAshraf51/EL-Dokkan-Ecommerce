@@ -12,6 +12,7 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         public Product GetProductByCartItem(CartItem cartItem);
         public void ClearCart(int cartId);
         public Cart GetCartByUserId(int userId);
+        // create
         public void CreateCart(int userId);
 
         public void Save();
