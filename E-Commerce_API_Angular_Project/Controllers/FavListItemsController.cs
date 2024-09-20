@@ -1,4 +1,5 @@
 ﻿
+using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
 using E_Commerce_API_Angular_Project.Repository;
@@ -23,20 +24,20 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost("AddProductToFavList")]
-        public IActionResult AddProductToFavList(int userId, int productId)
+        public IActionResult AddProductToFavList(favListProductItemDTO prodDTO)
         {
             try
             {
-                var favList = _favListItemsRepo.GetFavListByUserId(userId);
+                var favList = _favListItemsRepo.GetFavListByUserId(prodDTO.userId);
                 if (favList == null)
                     return NotFound("Favorite list not found.");
 
-                var product = _productRepo.GetById(productId);
+                var product = _productRepo.GetById(prodDTO.productId);
                 if (product == null)
                     return NotFound("Product not found.");
 
 
-                var existingFavItem = favList.favListItems.FirstOrDefault(i => i.ProductId == productId);
+                var existingFavItem = favList.favListItems.FirstOrDefault(i => i.ProductId == prodDTO.productId);
                 if (existingFavItem != null)
                 {
                     return BadRequest("Product is already in the favorite list.");
@@ -45,7 +46,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 var favItem = new favListItems
                 {
                     favlistId = favList.Id,
-                    ProductId = productId
+                    ProductId = prodDTO.productId
                 };
 
                 _favListItemsRepo.AddProductToFavList(favItem);
