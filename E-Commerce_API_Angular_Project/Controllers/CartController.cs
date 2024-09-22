@@ -134,6 +134,20 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return NoContent();
         }
 
+        [HttpGet("user/{userId}/products")]
+        public IActionResult GetCartProductsByUserId(int userId)
+        {
+
+            var cart = CartRepo.GetCartWithProductsByUserId(userId);
+
+            if (cart == null)
+                return NotFound(new { Message = "Cart not found for this user." });
+
+            var products = cart.CartItems.Select(item => item.Product).ToList();
+
+            return Ok(products);
+        }
+
 
 
     }

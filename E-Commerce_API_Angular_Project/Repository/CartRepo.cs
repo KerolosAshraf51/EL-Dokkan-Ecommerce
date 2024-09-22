@@ -27,6 +27,13 @@ namespace E_Commerce_API_Angular_Project.Repository
 
 
         }
+
+        public Cart GetCartWithProductsByUserId(int userId)
+        {
+            return context.Carts.Include(c => c.CartItems)
+                                .ThenInclude(c => c.Product)
+                                 .FirstOrDefault(c => c.UserId == userId);
+        }
         public void Update(Cart cart)
         {
             context.Update(cart);

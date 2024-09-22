@@ -207,6 +207,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         return Ok(new
                         {
                             token = new JwtSecurityTokenHandler().WriteToken(mytoken),
+                            //edit token time
                             expiration = DateTime.Now.AddHours(1)//mytoken.ValidTo
                             //
                         });
