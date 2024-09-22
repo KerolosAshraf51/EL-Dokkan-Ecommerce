@@ -86,7 +86,7 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
           
             return context.Carts.Include(c => c.CartItems)
-                               //  .ThenInclude(ci => ci.Product)
+                            
                                  .FirstOrDefault(c => c.UserId == userId);
         }
         public void Save()

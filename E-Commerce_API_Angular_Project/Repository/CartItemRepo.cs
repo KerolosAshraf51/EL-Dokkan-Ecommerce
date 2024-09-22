@@ -1,5 +1,6 @@
 ﻿using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce_API_Angular_Project.Repository
 {
@@ -47,6 +48,22 @@ namespace E_Commerce_API_Angular_Project.Repository
         public void Save()
         {
             context.SaveChanges();
+        }
+
+        public bool removeItem(int cartId, int productId)
+        {
+           var cartItem =  context.CartItems.Where(c=>c.CartId == cartId)
+                     .FirstOrDefault(c => c.ProductId == productId);
+
+            if (cartItem != null)
+            {
+                context.Remove(cartItem);
+                return true;
+            }
+
+            return false;
+           
+            
         }
 
 
