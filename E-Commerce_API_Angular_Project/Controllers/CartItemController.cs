@@ -1,6 +1,7 @@
 ﻿using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
+using E_Commerce_API_Angular_Project.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +47,25 @@ namespace E_Commerce_API_Angular_Project.Controllers
         {
             List<CartItem> cartItems = CartItemRepo.GetAll(cartId);
             return Ok(cartItems);
+        }
+
+
+
+        [HttpDelete("RemoveItemFromcart")]
+
+        public IActionResult RemoveItemFromcart(int userId, int productId)
+        {
+            var cart = CartRepo.GetCartByUserId(userId);
+            bool del = CartItemRepo.removeItem(cart.Id, productId);
+            if (del) 
+            {
+                CartItemRepo.Save();
+                return Ok();
+            }
+
+            else
+                return NotFound();
+
         }
 
 
