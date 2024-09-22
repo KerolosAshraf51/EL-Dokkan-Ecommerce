@@ -19,7 +19,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             CartRepo = cartRepo;
         }
         [HttpPost]
-        [Route("Create CartItem")]
+        [Route("CreateCartItem")]
         public ActionResult Create(CartItemsDto cartItemsDto)
         {
             Cart cart=CartRepo.GetCartByUserId(cartItemsDto.UserId);

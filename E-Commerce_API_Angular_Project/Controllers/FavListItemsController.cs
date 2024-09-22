@@ -50,16 +50,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 };
 
                 _favListItemsRepo.AddProductToFavList(favItem);
-                return Ok("Product added to favorites.");
+                return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-
-
 
 
         [HttpDelete("RemoveProductFromFavList")]
@@ -82,51 +79,6 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
-
-
-
-
-
-        //[HttpGet("GetSortedFavList")]
-        //public IActionResult GetSortedFavList(int userId, string sortBy)
-        //{
-        //    try
-        //    {
-        //        var favList = _favListItemsRepo.GetFavListByUserId(userId);
-
-        //        if (favList == null)
-        //        {
-        //            return NotFound("Favorite list not found.");
-        //        }
-
-        //        var sortedItems = favList.favListItems.AsQueryable();
-
-        //        switch (sortBy.ToLower())
-        //        {
-        //            case "price":
-        //                sortedItems = sortedItems.OrderBy(i => i.Product.Price);
-        //                break;
-        //            case "rating":
-        //                sortedItems = sortedItems.OrderByDescending(i => i.Product.Reviews);
-        //                break;
-        //            case "name":
-        //                sortedItems = sortedItems.OrderBy(i => i.Product.Name);
-        //                break;
-        //            default:
-        //                return BadRequest("Invalid sorting parameter.");
-        //        }
-
-        //        return Ok(sortedItems.ToList());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
-
-
-
-
         [HttpGet("GetAllItemsInFavList")]
         public IActionResult GetAllItemsInFavList(int userId)
         {
@@ -136,16 +88,11 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 return NotFound("No items found in the favorite list.");
             }
-
-
-            if (items.Count == 1)
-            {
-                return Ok(new { message = "There is only one item in your favorite list.", items });
-            }
-
             return Ok(items);
+
         }
 
+       
     }
 }
 

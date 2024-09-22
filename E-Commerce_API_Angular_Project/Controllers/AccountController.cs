@@ -258,7 +258,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
             if (changePasswordResult.Succeeded)
             {
-                return Ok("Password updated successfully.");
+                return Ok();
             }
 
             foreach (var error in changePasswordResult.Errors)
@@ -313,7 +313,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
            
         
 
-            return Ok("OTP sent successfully");
+            return Ok();
         }
 
 
@@ -356,7 +356,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
            
 
-            return Ok("password changed successfully");
+            return Ok();
            
         }
 
