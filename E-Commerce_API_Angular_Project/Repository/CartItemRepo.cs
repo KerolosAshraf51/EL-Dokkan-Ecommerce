@@ -17,9 +17,14 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             context.Add(cartItem);
         }
-        public void Update(CartItem cartItem)
+
+
+        public void UpdateCartItem(CartItem cartItem)
         {
+            cartItem.Quantity++;
             context.Update(cartItem);
+            
+
         }
         public void Delete(int id)
         {
