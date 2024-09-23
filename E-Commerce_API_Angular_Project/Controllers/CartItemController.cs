@@ -4,6 +4,7 @@ using E_Commerce_API_Angular_Project.Models;
 using E_Commerce_API_Angular_Project.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace E_Commerce_API_Angular_Project.Controllers
 {
@@ -23,9 +24,29 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public ActionResult Create(CartItemsDto cartItemsDto)
         {
             Cart cart=CartRepo.GetCartByUserId(cartItemsDto.UserId);
+            List<CartItem> cartItems = cart.CartItems.ToList();
+            foreach (CartItem item in cartItems) 
+            {
+                if(item.ProductId == cartItemsDto.ProductId)
+                {
+                    CartItemRepo.UpdateCartItem(item);
+                    CartItemRepo.Save();
+                    return Ok(item);    
 
+                }
+                //else
+                //{
+                //    CartItem NewcartItem = new CartItem();
+                //    NewcartItem.CartId = cart.Id;
+                //    NewcartItem.ProductId = cartItemsDto.ProductId;
+                //    NewcartItem.Quantity = cartItemsDto.Quantity;
+                //    CartItemRepo.Add(NewcartItem);
+                    
+                //}
+                
+            }
             CartItem cartItem = new CartItem();
-            cartItem.CartId = cart.Id; 
+            cartItem.CartId = cart.Id;
             cartItem.ProductId = cartItemsDto.ProductId;
             cartItem.Quantity = cartItemsDto.Quantity;
             CartItemRepo.Add(cartItem);
@@ -48,6 +69,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             List<CartItem> cartItems = CartItemRepo.GetAll(cartId);
             return Ok(cartItems);
         }
+       
 
 
 
