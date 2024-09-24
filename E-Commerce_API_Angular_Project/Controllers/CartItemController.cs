@@ -72,6 +72,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 cartItem.Quantity += 1;
                 CartItemRepo.Update(cartItem);
+                CartItemRepo.Save();
                 return Ok(cartItem);
             }
 
@@ -92,6 +93,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 cartItem.Quantity -= 1;
                 CartItemRepo.Update(cartItem);
+                CartItemRepo.Save();
                 return Ok(cartItem);
             }
 
