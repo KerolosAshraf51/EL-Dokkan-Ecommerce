@@ -243,6 +243,57 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
+
+        [HttpGet("GetUserById")]//Post api/Account/GetUserById
+        [Authorize]
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            appUser user = AppUserRepo.GetById(userId);
+            if (user != null)
+            {
+                profileDTO profileDTO = new profileDTO();
+                profileDTO.UserName = user.UserName;
+                profileDTO.profileImageURL = user.profileImageURL;
+                profileDTO.Phone = user.PhoneNumber;
+                profileDTO.Email = user.Email;
+                profileDTO.Address = user.Address;
+                return Ok(profileDTO);
+            }
+            return BadRequest("USER NOT FOUND , ENTER VALID ID");
+        }
+
+
+        [HttpPost("UpdateUserInfo")]//Post api/Account/UpdateUserInfo
+        [Authorize]
+        public async Task<IActionResult> UpdateUserInfo(int userId, profileDTO profileDTO)
+        {
+            appUser user = AppUserRepo.GetById(userId);
+            if (user != null)
+            {
+                if (!AppUserRepo.IsEmailUnique(profileDTO.Email))
+                {
+                    ModelState.AddModelError("UserInputErrors", "Email is already Exist");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        user.UserName = profileDTO.UserName; // not allowed
+                        user.NormalizedUserName = profileDTO.UserName.ToUpper();
+                        user.profileImageURL = profileDTO.profileImageURL;
+                        user.PhoneNumber = profileDTO.Phone;
+                        user.Email = profileDTO.Email;
+                        user.NormalizedEmail = profileDTO.Email.ToUpper();
+                        user.Address = profileDTO.Address;
+                        AppUserRepo.Update(user);
+                        AppUserRepo.Save();
+                        return Ok(profileDTO);
+                    }
+                }
+                
+            }
+            return BadRequest(ModelState);
+        }
         //*******************password problems*********************     
 
 
@@ -365,6 +416,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok();
            
         }
+
 
 
         //*****************************ROLES MANAGMENT*****************************
