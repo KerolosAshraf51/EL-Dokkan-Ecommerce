@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using E_Commerce_API_Angular_Project.Interfaces;
 
 
 namespace E_Commerce_API_Angular_Project.Controllers
@@ -18,13 +19,17 @@ namespace E_Commerce_API_Angular_Project.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IMailRepo _mailRepo;
+        private readonly ICartRepo _cartRepo;
         private readonly EcommContext ecommContext;
         public OrdersController(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository
-            , EcommContext ecommContext)
+            , EcommContext ecommContext, ICartRepo cartRepo, IMailRepo mailRepo)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             this.ecommContext = ecommContext;
+            _mailRepo = mailRepo;
+            _cartRepo = cartRepo;
         }
 
         [HttpGet("{id}")]
@@ -164,13 +169,18 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 return BadRequest("Cart items are required.");
             }
-            Order order = new Order();
-            order.UserId = checkoutDTO.userID;
-            order.OrderDate = DateTime.Now;
-            order.UpdatedAt = DateTime.Now;
-            order.TotalAmount = 0; 
-            order.Status = OrderStatus.Pending;
-            order.OrderItems = new List<OrderItem>();
+            //get cartItems
+            // List<CartItem> cartItems = _ca
+            Order order = new Order
+            {
+                UserId = checkoutDTO.userID,
+                OrderDate = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                TotalAmount = 0,
+                Status = OrderStatus.Pending,
+                PaymentMethod = PaymentMethod.Cash_on_delivery.ToString(),
+                OrderItems = new List<OrderItem>()
+            };
             foreach (var item in checkoutDTO.cartItems)
             {
                 OrderItem orderItem = new OrderItem();
@@ -221,48 +231,37 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     break;
             }
             order.Status = OrderStatus.Shipped;
-            //_orderRepository.sendMail(placeOrderDTO.OrderId, placeOrderDTO.BillingDetails.Email);
-            //--------
-            // send Email contains orderID
-            // var email = new MimeMessage();
-            // email.Sender = MailboxAddress.Parse("shaimafarag123@gmail.com");
-            // email.To.Add(MailboxAddress.Parse(placeOrderDTO.BillingDetails.Email));
-            // email.Subject = "Your Order From ElDokan Site";
-            // var builder = new BodyBuilder();
-            // builder.HtmlBody = $"your Order ID is : {placeOrderDTO.OrderId}";
-            // email.Body = builder.ToMessageBody();
-            //using (var smtp = new SmtpClient())
-            // {  
-            //     smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            //     smtp.Authenticate("shaimafarag123@gmail.com", "");
-            //     smtp.Send(email);
-            //     smtp.Disconnect(true);
-            // }
+
             //------------------------
-            try
-            {
-                var email = new MimeMessage();
-                email.Sender = MailboxAddress.Parse("shaimafarag123@gmail.com");
-                email.To.Add(MailboxAddress.Parse(placeOrderDTO.BillingDetails.Email));
-                email.Subject = "Your Order From ElDokan Site";
+            //try
+            //{
+            //    var email = new MimeMessage();
+            //    email.Sender = MailboxAddress.Parse( "eldokanonlinestore@hotmail.com");
+            //    email.To.Add(MailboxAddress.Parse(placeOrderDTO.BillingDetails.Email));
+            //    email.Subject = "Your Order From ElDokan Site";
 
-                var builder = new BodyBuilder();
-                builder.HtmlBody = $"Your Order ID is: {placeOrderDTO.OrderId}";
-                email.Body = builder.ToMessageBody();
+            //    var builder = new BodyBuilder();
+            //    builder.HtmlBody = $"Your Order ID is: {placeOrderDTO.OrderId}";
+            //    email.Body = builder.ToMessageBody();
 
-                var smtp = new SmtpClient();
-                
-                    smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                    smtp.Authenticate("shaimafarag123@gmail.com", ""); // Replace with your email password
-                    smtp.Send(email);
-                    smtp.Disconnect(true);
-                
-            }
-            catch (Exception ex)
-            {
-                // Log exception (optional)
-                return StatusCode(500, "Error sending email: " + ex.Message);
-            }
+            //    var smtp = new SmtpClient();
+
+            //    //smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            //    //smtp.Authenticate("shaimafarag123@gmail.com", ""); // Replace with your email password
+            //     smtp.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+            //    smtp.Authenticate("eldokanonlinestore@hotmail.com", "dokan12345");
+            //    smtp.Send(email);
+            //    smtp.Disconnect(true);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Log exception (optional)
+            //    return StatusCode(500, "Error sending email: " + ex.Message);
+            //}
+            string subject = "Your Order From ElDokan Site";
+            string body = $"Your Order ID is: {placeOrderDTO.OrderId}";
+            _mailRepo.SendEmail(placeOrderDTO.BillingDetails.Email,  subject, body);
             return Ok(order);
         }
         [HttpPost]
@@ -270,10 +269,14 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public IActionResult CancelOrder(int orderId)
         {
             Order order = _orderRepository.GetOrderById(orderId);
-            Cart cart =_orderRepository.CancelOrder(orderId);
+            Cart cart =_cartRepo.GetCartByUserId(order.UserId);
+            //Cart cart =_orderRepository.CancelOrder(orderId);
             //clear cart  
-            ecommContext.CartItems.RemoveRange(cart.CartItems);
-            _orderRepository.Save();
+            _orderRepository.CancelOrder(orderId);
+            _cartRepo.ClearCart(cart.Id);
+
+           // ecommContext.CartItems.RemoveRange(cart.CartItems);
+          //  _orderRepository.Save();
             //fill cart with items of the canceld order
             List<CartItem> newCartItems = new List<CartItem>();
             foreach (var item in order.OrderItems)
@@ -290,31 +293,46 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(cart.CartItems);
            
         }
-       //------------------------
-
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateOrder( int id, OrderDTO orderDto)
+        [HttpPost]
+        [Route("Order delivered")]
+        public IActionResult Delivered(int orderId)
         {
-            if (id != orderDto.OrderId) return BadRequest();
-            Order order = new Order();
-            order.UserId = orderDto.UserId;
-            order.OrderDate = DateTime.Now;
-            order.UpdatedAt = DateTime.Now;
-            order.TotalAmount= orderDto.TotalAmount;
-            order.Status = orderDto.Status;
-           // _orderRepository.UpdateOrder(order);
-            //return NoContent();
+            
+            Order order= _orderRepository.GetOrderById(orderId);
             if (order != null)
             {
-               _orderRepository.UpdateOrder(order);
+                order.Status = OrderStatus.Delivered;
                 _orderRepository.Save();
-                return NoContent();
+                return Ok("Order Delivered successfully");
             }
-            else
-            {
-                return NotFound("Order Not VAlid");
-            }
+            return BadRequest("Order not found");
+
         }
+        //------------------------
+
+        //[HttpPut("{id:int}")]
+        //public IActionResult UpdateOrder( int id, OrderDTO orderDto)
+        //{
+        //    if (id != orderDto.OrderId) return BadRequest();
+        //    Order order = new Order();
+        //    order.UserId = orderDto.UserId;
+        //    order.OrderDate = DateTime.Now;
+        //    order.UpdatedAt = DateTime.Now;
+        //    order.TotalAmount= orderDto.TotalAmount;
+        //    order.Status = orderDto.Status;
+        //   // _orderRepository.UpdateOrder(order);
+        //    //return NoContent();
+        //    if (order != null)
+        //    {
+        //       _orderRepository.UpdateOrder(order);
+        //        _orderRepository.Save();
+        //        return NoContent();
+        //    }
+        //    else
+        //    {
+        //        return NotFound("Order Not VAlid");
+        //    }
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult DeleteOrder(int id)
