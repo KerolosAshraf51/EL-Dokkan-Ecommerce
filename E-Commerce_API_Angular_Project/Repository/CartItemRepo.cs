@@ -26,6 +26,15 @@ namespace E_Commerce_API_Angular_Project.Repository
             
 
         }
+        public void Update(CartItem cartItem)
+        {
+            
+            context.Update(cartItem);
+
+
+        }
+
+
         public void Delete(int id)
         {
             CartItem deletedCartItem = GetById(id);

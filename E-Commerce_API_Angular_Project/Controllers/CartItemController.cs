@@ -14,10 +14,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
     {
         ICartItemRepo CartItemRepo;
         ICartRepo CartRepo;
-        public CartItemController(ICartItemRepo cartItemRepo, ICartRepo cartRepo)
+        IProductRepo ProductRepo;
+        public CartItemController(ICartItemRepo cartItemRepo, ICartRepo cartRepo, IProductRepo productRepo)
         {
             CartItemRepo = cartItemRepo;
             CartRepo = cartRepo;
+            ProductRepo = productRepo;
         }
         [HttpPost]
         [Route("CreateCartItem")]
@@ -55,6 +57,51 @@ namespace E_Commerce_API_Angular_Project.Controllers
             CartItemRepo.Save();
             return Ok(newItem);
         }
+
+        [HttpPost("IncreaseQuantity")]
+        public IActionResult IncreaseQuantity(int cartItemId)
+        {
+            CartItem cartItem = CartItemRepo.GetById(cartItemId);
+
+            if (cartItem == null)
+            {
+                return NotFound("CartItem not found.");
+            }
+
+           Product product = ProductRepo.GetById(cartItem.ProductId);
+
+            if (cartItem.Quantity < product.StockQuantity)
+            {
+                cartItem.Quantity += 1;
+                CartItemRepo.Update(cartItem);
+                CartItemRepo.Save();
+                return Ok(cartItem);
+            }
+
+            return BadRequest("Cannot increase quantity beyond available stock.");
+        }
+
+        [HttpPost("DecreaseQuantity")]
+        public IActionResult DecreaseQuantity(int cartItemId)
+        {
+            CartItem cartItem = CartItemRepo.GetById(cartItemId);
+
+            if (cartItem == null)
+            {
+                return NotFound("CartItem not found.");
+            }
+
+            if (cartItem.Quantity > 1)
+            {
+                cartItem.Quantity -= 1;
+                CartItemRepo.Update(cartItem);
+                CartItemRepo.Save();
+                return Ok(cartItem);
+            }
+
+            return BadRequest("Quantity cannot be less than 1.");
+        }
+
 
         [HttpGet("{id}")]
         public IActionResult GetCartItem(int id)
