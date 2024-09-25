@@ -42,14 +42,15 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public IMailRepo mailRepo { get; set; }
         public IFavListRepo FavListRepo { get; set; }
         public IUserOtpRepo UserOtpRepo { get; set; }
-
+        public IUserRoleRepo IUserRoleRepo { get; set; }
         public AccountController(UserManager<appUser> UserManager,
                                  IConfiguration config,
                                  IAppUserRepo appUserRepo,
                                  ICartRepo cartRepo,
                                  IMailRepo mailRepo,
                                  IFavListRepo favListRepo,
-                                 IUserOtpRepo userOtpRepo)
+                                 IUserOtpRepo userOtpRepo,
+                                 IUserRoleRepo IuserRoleRepo)
         {
             userManager = UserManager;
             this.config = config;
@@ -58,6 +59,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             this.mailRepo = mailRepo;
             FavListRepo = favListRepo;
             UserOtpRepo = userOtpRepo;
+            IUserRoleRepo = IuserRoleRepo;
         }
 
 
@@ -128,30 +130,40 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
         [HttpPost("RegisterAsAdmin")]//Post api/Account/RegisterAsAdmin
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RegisterAsAdmin(RegisterDto UserFromRequest)
         {
-            if (ModelState.IsValid)
+            if (!AppUserRepo.IsEmailUnique(UserFromRequest.Email))
             {
-                //save DB
-                appUser user = new appUser();
-                user.UserName = UserFromRequest.UserName;
-                user.Email = UserFromRequest.Email;
-                user.Address = UserFromRequest.Address;
-                user.CreatedAt = DateTime.Now;
-                user.UpdatedAt = DateTime.Now;
+                ModelState.AddModelError("UserInputErrors", "Email is already Exist");
+            }
+            else
+            {
 
-                IdentityResult result =
-                    await userManager.CreateAsync(user, UserFromRequest.Password);
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    await userManager.AddToRoleAsync(user, "Admin");
-                    return Ok("Create");
-                }
-                foreach (var item in result.Errors)
-                {
-                    ModelState.AddModelError("PAssword", item.Description);
+                    //save DB
+                    appUser user = new appUser();
+                    user.UserName = UserFromRequest.UserName;
+                    user.Email = UserFromRequest.Email;
+                    user.Address = UserFromRequest.Address;
+                    user.CreatedAt = DateTime.Now;
+                    user.UpdatedAt = DateTime.Now;
+
+                    IdentityResult result =
+                        await userManager.CreateAsync(user, UserFromRequest.Password);
+                    if (result.Succeeded)
+                    {
+                        await IUserRoleRepo.AssignRole(user, "admin");
+                        return Ok();
+                    }
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("UserInputErrors", item.Description);
+                    }
                 }
             }
+
             return BadRequest(ModelState);
         }
 
@@ -231,13 +243,58 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
+
+        [HttpGet("GetUserById")]//Post api/Account/GetUserById
+        [Authorize]
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            appUser user = AppUserRepo.GetById(userId);
+            if (user != null)
+            {
+                profileDTO profileDTO = new profileDTO();
+                profileDTO.UserName = user.UserName;
+                profileDTO.profileImageURL = user.profileImageURL;
+                profileDTO.Phone = user.PhoneNumber;
+                profileDTO.Email = user.Email;
+                profileDTO.Address = user.Address;
+                return Ok(profileDTO);
+            }
+            return BadRequest("USER NOT FOUND , ENTER VALID ID");
+        }
+
+
+        [HttpPost("UpdateUserInfo")]//Post api/Account/UpdateUserInfo
+        [Authorize]
+        public async Task<IActionResult> UpdateUserInfo(int userId, profileDTO profileDTO)
+        {
+            appUser user = AppUserRepo.GetById(userId);
+            if (user != null)
+            {
+                if (!AppUserRepo.IsEmailUnique(profileDTO.Email))
+                {
+                    ModelState.AddModelError("UserInputErrors", "Email is already Exist");
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        user.UserName = profileDTO.UserName; // not allowed
+                        user.NormalizedUserName = profileDTO.UserName.ToUpper();
+                        user.profileImageURL = profileDTO.profileImageURL;
+                        user.PhoneNumber = profileDTO.Phone;
+                        user.Email = profileDTO.Email;
+                        user.NormalizedEmail = profileDTO.Email.ToUpper();
+                        user.Address = profileDTO.Address;
+                        AppUserRepo.Update(user);
+                        AppUserRepo.Save();
+                        return Ok(profileDTO);
+                    }
+                }
+                
+            }
+            return BadRequest(ModelState);
+        }
         //*******************password problems*********************     
-
-
-         
-
-
-
 
 
         [HttpPost("UpdatePassword")] //Post api/Account/UpdatePassword
@@ -362,10 +419,83 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
 
+        //*****************************ROLES MANAGMENT*****************************
+
+        [HttpPost("asssinRole")]//Post api/Account/asssinRole
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> asssinRole(UserRoleDTO userRoleDTO)
+        {
+            var user = AppUserRepo.GetById(userRoleDTO.userId);
+            var RoleName = IUserRoleRepo.GetRoleNameById(userRoleDTO.RoleId);
+
+            var res = await IUserRoleRepo.AssignRole(user, RoleName);
+
+            if (res)
+            { 
+                return Ok(); 
+            }
+
+            return BadRequest();
+        }
+
+
+        [HttpPost("RemoveRole")]//Post api/Account/RemoveRole
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> RemoveRole(UserRoleDTO userRoleDTO)
+        {
+            var user = AppUserRepo.GetById(userRoleDTO.userId);
+            if (user == null)
+                {
+                return BadRequest("userNotFound");
+                }
+            var RoleName = IUserRoleRepo.GetRoleNameById(userRoleDTO.RoleId);
+            if (RoleName == null)
+            {
+                return BadRequest("RoleNotFound");
+            }
+            var res = await IUserRoleRepo.RemoveRole(user, RoleName);
+
+            if (res)
+            {
+                return Ok();
+            }
+            
+            return BadRequest("user not assigned to this role");
+        }
 
 
 
+        [HttpPost("GetUserRoles")]//Post api/Account/GetUserRoles
+        [Authorize]
+        public async Task<IActionResult> GetUserRoles(int userId)
+        {
+            var user = AppUserRepo.GetById(userId);
+            if (user != null) {
+                List<string> roles = await IUserRoleRepo.GetUserRoles(user);
+                if (roles.Count>0)
+                {
+                    return Ok(roles);
+                }
+                return BadRequest("no roles assigned to this user");
+            }
 
+            return BadRequest("userNotFound");
+
+            
+        }
+
+
+        [HttpPost("GetRoleId")]//Post api/Account/GetRoleId
+        [Authorize]
+        public async Task<IActionResult> GetRoleId(string roleName)
+        {
+            int RoleId = IUserRoleRepo.getRoleId(roleName);
+            if(RoleId >= 0)
+            {
+            return Ok(RoleId);
+            }
+            return BadRequest("role not found");
+        }
 
     }
 
