@@ -23,6 +23,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [Route("CreateCartItem")]
         public ActionResult Create(CartItemsDto cartItemsDto)
         {
+            bool newItem = false;
             Cart cart=CartRepo.GetCartByUserId(cartItemsDto.UserId);
             List<CartItem> cartItems = cart.CartItems.ToList();
             foreach (CartItem item in cartItems) 
@@ -31,7 +32,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 {
                     CartItemRepo.UpdateCartItem(item);
                     CartItemRepo.Save();
-                    return Ok(item);    
+                    return Ok(newItem);    
 
                 }
                 //else
@@ -49,9 +50,10 @@ namespace E_Commerce_API_Angular_Project.Controllers
             cartItem.CartId = cart.Id;
             cartItem.ProductId = cartItemsDto.ProductId;
             cartItem.Quantity = cartItemsDto.Quantity;
+            newItem = true;
             CartItemRepo.Add(cartItem);
             CartItemRepo.Save();
-            return Ok(cartItem);
+            return Ok(newItem);
         }
 
         [HttpGet("{id}")]

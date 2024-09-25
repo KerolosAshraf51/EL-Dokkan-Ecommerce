@@ -138,14 +138,21 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public IActionResult GetCartProductsByUserId(int userId)
         {
 
-            var cart = CartRepo.GetCartWithProductsByUserId(userId);
+            try
+            {
+                var cart = CartRepo.GetCartWithProductsByUserId(userId);
 
-            if (cart == null)
-                return NotFound(new { Message = "Cart not found for this user." });
+                if (cart == null)
+                    return NotFound(new { Message = "Cart not found for this user." });
 
-            var products = cart.CartItems.Select(item => item.Product).ToList();
+                List<Product> products = cart.CartItems.Select(item => item.Product).ToList();
 
-            return Ok(products);
+                return Ok(products);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 

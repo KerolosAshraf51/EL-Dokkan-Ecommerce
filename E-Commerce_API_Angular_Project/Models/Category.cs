@@ -12,7 +12,6 @@ namespace E_Commerce_API_Angular_Project.Models
         [JsonIgnore]
          public List<Product>? Products { get; set; }
         
-
         public List<Brand>? Brands { get; set; }
     }
 }

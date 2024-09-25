@@ -6,8 +6,6 @@ namespace E_Commerce_API_Angular_Project.Models
     {
         public int Id { get; set; }
 
-
-
         [ForeignKey("favList")]
         public int favlistId { get; set; }
         public favList favList {  get; set; }

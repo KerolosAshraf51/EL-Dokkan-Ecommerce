@@ -70,7 +70,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     return NotFound("Favorite item not found.");
 
                 _favListItemsRepo.RemoveProductFromFavList(favItem);
-                return Ok("Product removed from favorites.");
+                return Ok();
             }
             catch (Exception ex)
             {
