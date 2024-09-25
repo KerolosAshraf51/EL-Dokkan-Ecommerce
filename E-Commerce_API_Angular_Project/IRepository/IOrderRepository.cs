@@ -16,8 +16,8 @@ namespace E_Commerce_API_Angular_Project.IRepository
         public void Save();
         public Product GetProductByOrderItemId(OrderItem orderItem);
         public void CalculateTotal(Order order);
-        public Cart CancelOrder(int orderId);
-        public void sendMail(int orderId, string userMail);
+        public void CancelOrder(int orderId);
+        //public void sendMail(int orderId, string userMail);
         //public double TotalPriceOfOrder(int orderID);
     }
 }

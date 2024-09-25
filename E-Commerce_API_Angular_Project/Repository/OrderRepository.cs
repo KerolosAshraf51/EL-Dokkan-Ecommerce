@@ -108,57 +108,16 @@ namespace E_Commerce_API_Angular_Project.Repository
             if(order == null || order.OrderItems==null) return;
             order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.PriceAtPurchase);
         }
-        public Cart CancelOrder(int orderId)
+        public void CancelOrder(int orderId)
         {
             Order order = GetOrderById(orderId);
             order.Status = OrderStatus.Canceled;
            //get cart by user id
-            Cart cart= _context.Carts.Include(c => c.CartItems).FirstOrDefault(c => c.UserId == order.UserId);
-            return cart;
-            ////clear cart  
-            //_context.CartItems.RemoveRange(cart.CartItems);
-            //Save();
-            ////fill cart with items of the canceld order
-            //List<CartItem> newCartItems = new List<CartItem>();
-            //foreach(var item in order.OrderItems)
-            //{
-            //    CartItem cartItem = new CartItem();
-            //    cartItem.CartId = cart.Id;
-            //    cartItem.Quantity = item.Quantity;
-            //    cartItem.ProductId = item.ProductId;
-            //    newCartItems.Add(cartItem);
-            //}
-            //cart.CartItems = newCartItems;
-            //Save();
-        }
-        public void sendMail(int orderId, string userMail)
-        {
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("shaimafarag123@gmail.com", "praisebetogod"),
-                EnableSsl = true,
-            };
+            //Cart cart= _context.Carts.Include(c => c.CartItems).FirstOrDefault(c => c.UserId == order.UserId);
+           // return cart;
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress("shaimafarag123@gmail.com"),
-                Subject = "Test Email",
-                Body = $"Your Order Id : {orderId}",
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(userMail);
-
-            try
-            {
-                smtpClient.Send(mailMessage);
-               // Console.WriteLine("Email sent successfully!");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"{ex}");
-            }
         }
+      
         //public double TotalPriceOfOrder(int orderID)
         //{
         //    Order order = _context.Orders
