@@ -148,7 +148,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             order.OrderDate = DateTime.Now;
             order.UpdatedAt = DateTime.Now;
             order.TotalAmount = orderDto.TotalAmount; //should calculated by another function
-            order.Status = OrderStatus.Pending;
+            order.Status = OrderStatus.Processing;
 
             _orderRepository.AddOrder(order);
             _orderRepository.Save();
@@ -177,7 +177,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 OrderDate = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 TotalAmount = 0,
-                Status = OrderStatus.Pending,
+                Status = OrderStatus.Processing,
                 PaymentMethod = PaymentMethod.Cash_on_delivery.ToString(),
                 OrderItems = new List<OrderItem>()
             };
