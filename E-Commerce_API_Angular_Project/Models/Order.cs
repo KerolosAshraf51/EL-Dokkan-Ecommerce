@@ -7,13 +7,10 @@ namespace E_Commerce_API_Angular_Project.Models
 {
     public enum OrderStatus
     {
-        Pending,
         Processing,
         Shipped,
         Delivered,
-        Canceled,
-        Returned,
-        Refunded
+        Canceled
     }
     public class Order
     {

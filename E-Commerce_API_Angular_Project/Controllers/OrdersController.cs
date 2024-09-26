@@ -165,7 +165,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 return BadRequest("Checkout data is required.");
             }
 
-            if (checkoutDTO.cartItems == null || !checkoutDTO.cartItems.Any())
+            if (checkoutDTO.cartItems == null)
             {
                 return BadRequest("Cart items are required.");
             }
@@ -203,6 +203,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         {
             if (placeOrderDTO == null) 
             { return BadRequest(); }
+
             Order order = _orderRepository.GetOrderById(placeOrderDTO.OrderId);
             if (order == null)
             {
@@ -230,7 +231,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     order.PaymentMethod=PaymentMethod.Check_payments.ToString();
                     break;
             }
-            order.Status = OrderStatus.Shipped;
+            order.Status = OrderStatus.Processing;
+
+            _orderRepository.Save();
 
             //------------------------
             //try
@@ -259,13 +262,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
             //    // Log exception (optional)
             //    return StatusCode(500, "Error sending email: " + ex.Message);
             //}
-            string subject = "Your Order From ElDokan Site";
-            string body = $"Your Order ID is: {placeOrderDTO.OrderId}";
-            _mailRepo.SendEmail(placeOrderDTO.BillingDetails.Email,  subject, body);
+            //string subject = "Your Order From El-Dokan Site";
+            //string body = $"Your Order ID is: {placeOrderDTO.OrderId}";
+            //_mailRepo.SendEmail(placeOrderDTO.BillingDetails.Email,  subject, body);
             return Ok(order);
         }
         [HttpPost]
-        [Route("Cancel Order")]
+        [Route("CancelOrder")]
         public IActionResult CancelOrder(int orderId)
         {
             Order order = _orderRepository.GetOrderById(orderId);
@@ -294,7 +297,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
            
         }
         [HttpPost]
-        [Route("Order delivered")]
+        [Route("Orderdelivered")]
         public IActionResult Delivered(int orderId)
         {
             
