@@ -73,7 +73,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         //delete account
 
         [Authorize]
-        [HttpGet("DeleteProfile")]//Get api/AppUser/DeleteProfile
+        [HttpDelete("DeleteProfile")]//Get api/AppUser/DeleteProfile
         public ActionResult DeleteProfile()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
