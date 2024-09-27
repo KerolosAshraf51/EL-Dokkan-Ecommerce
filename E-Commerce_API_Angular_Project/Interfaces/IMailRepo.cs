@@ -2,6 +2,6 @@
 {
     public interface IMailRepo
     {
-        public void SendEmail(string toAddress, string subject, string body);
+        public Task<string> SendEmail(string toAddress, string subject, string body);
     }
 }

@@ -33,12 +33,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-     
+
         private readonly UserManager<appUser> userManager;
         private readonly IConfiguration config;
         public IAppUserRepo AppUserRepo { get; set; }
         public ICartRepo CartRepo { get; set; }
-       
+
         public IMailRepo mailRepo { get; set; }
         public IFavListRepo FavListRepo { get; set; }
         public IUserOtpRepo UserOtpRepo { get; set; }
@@ -70,7 +70,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 ModelState.AddModelError("UserInputErrors", "Email is already Exist");
             }
-            else 
+            else
             {
                 if (ModelState.IsValid)
                 {
@@ -91,8 +91,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     if (result.Succeeded)
                     {
                         //create cart and favList for user registered
-                         var userId =
-                            (await userManager.FindByNameAsync(UserFromRequest.UserName)).Id;
+                        var userId =
+                           (await userManager.FindByNameAsync(UserFromRequest.UserName)).Id;
 
                         // create Cart for new user
 
@@ -110,7 +110,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         FavList.userId = userId;
                         FavListRepo.CreateFavList(FavList);
                         FavListRepo.Save();
-                      
+
 
                         //=====================================
 
@@ -122,7 +122,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     }
 
                 }
-           
+
             }
             return BadRequest(ModelState);
         }
@@ -219,9 +219,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         return Ok(new
                         {
                             token = new JwtSecurityTokenHandler().WriteToken(mytoken),
-                         
+
                             expiration = DateTime.Now.AddYears(1)//mytoken.ValidTo
-                            
+
                         });
                     }
                 }
@@ -233,11 +233,11 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
         [HttpGet("getCurrentUserID")]//Post api/Account/getCurrentUserID
         [Authorize]
-        public async Task<IActionResult> getCurrentUserID ()
+        public async Task<IActionResult> getCurrentUserID()
         {
-           int userID =int.Parse((User.Claims
-                                      .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier))
-                                      .Value);
+            int userID = int.Parse((User.Claims
+                                       .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier))
+                                       .Value);
 
             return Ok(userID);
         }
@@ -290,7 +290,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         return Ok(profileDTO);
                     }
                 }
-                
+
             }
             return BadRequest(ModelState);
         }
@@ -298,7 +298,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
         [HttpPost("UpdatePassword")] //Post api/Account/UpdatePassword
-           [Authorize]
+        [Authorize]
         public async Task<IActionResult> UpdatePassword(UpdatePasswordDTO UpdatePasswordDTO)
         {
 
@@ -332,10 +332,10 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpPost("SendVerificationMail")]//Post api/Account/SendVerificationMail
         public async Task<IActionResult> SendVerificationMail(string toAddress)
         {
-             int OTP = 0;
+            int OTP = 0;
 
-        var user =
-                     (await userManager.FindByEmailAsync(toAddress));
+            var user =
+                         (await userManager.FindByEmailAsync(toAddress));
             if (user == null)
             {
                 return BadRequest("mail not found");
@@ -355,35 +355,27 @@ namespace E_Commerce_API_Angular_Project.Controllers
             UserOtpRepo.Add(userOtp);
             UserOtpRepo.save();
 
+            var res = await mailRepo.SendEmail(toAddress, "OTP", body);
 
-
-            try
+            if (res == "1")
             {
-               
-               // mailRepo.SendEmail(toAddress, "OTP", body);
+                return Ok();
             }
 
-            catch (Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
-           
-        
-
-            return Ok();
+            return BadRequest(res);
         }
 
 
-      
+
         [HttpPost("ResetPassword")] //Post api/Account/ResetPassword
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO ResetPasswordDTO)
         {
-           
+
 
             var user =
                      (await userManager.FindByEmailAsync(ResetPasswordDTO.Email));
 
-            if (UserOtpRepo.isCorrect(user.Id, ResetPasswordDTO.otp)) 
+            if (UserOtpRepo.isCorrect(user.Id, ResetPasswordDTO.otp))
             {
                 if (UserOtpRepo.isValid(user.Id, ResetPasswordDTO.otp)) //expired or still valid
                 {
@@ -408,13 +400,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
 
             else { return BadRequest("wrong OTP , try again"); }
-          
 
 
-           
+
+
 
             return Ok();
-           
+
         }
 
 
@@ -431,8 +423,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
             var res = await IUserRoleRepo.AssignRole(user, RoleName);
 
             if (res)
-            { 
-                return Ok(); 
+            {
+                return Ok();
             }
 
             return BadRequest();
@@ -445,9 +437,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
         {
             var user = AppUserRepo.GetById(userRoleDTO.userId);
             if (user == null)
-                {
+            {
                 return BadRequest("userNotFound");
-                }
+            }
             var RoleName = IUserRoleRepo.GetRoleNameById(userRoleDTO.RoleId);
             if (RoleName == null)
             {
@@ -459,7 +451,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             {
                 return Ok();
             }
-            
+
             return BadRequest("user not assigned to this role");
         }
 
@@ -470,9 +462,10 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public async Task<IActionResult> GetUserRoles(int userId)
         {
             var user = AppUserRepo.GetById(userId);
-            if (user != null) {
+            if (user != null)
+            {
                 List<string> roles = await IUserRoleRepo.GetUserRoles(user);
-                if (roles.Count>0)
+                if (roles.Count > 0)
                 {
                     return Ok(roles);
                 }
@@ -481,7 +474,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
             return BadRequest("userNotFound");
 
-            
+
         }
 
 
@@ -490,9 +483,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public async Task<IActionResult> GetRoleId(string roleName)
         {
             int RoleId = IUserRoleRepo.getRoleId(roleName);
-            if(RoleId >= 0)
+            if (RoleId >= 0)
             {
-            return Ok(RoleId);
+                return Ok(RoleId);
             }
             return BadRequest("role not found");
         }
