@@ -12,9 +12,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
     {
         ICartRepo CartRepo;
 
-        public CartController(ICartRepo cartRepo)
+        public IProductRepo ProductRepo { get; }
+
+        public CartController(ICartRepo cartRepo , IProductRepo productRepo )
         {
             CartRepo = cartRepo;
+            ProductRepo = productRepo;
         }
 
         [HttpPost]
@@ -104,6 +107,26 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 return NotFound(new { Message = "Cart not found for this user." });
 
            
+            return Ok(cart);
+        }
+
+        [HttpGet]
+        [Route("GetCartDetailsByUserId")]
+        public IActionResult GetCartDetailsByUserId(int userId)
+        {
+
+            var cart = CartRepo.GetCartByUserId(userId);
+
+
+            if (cart == null)
+                return NotFound(new { Message = "Cart not found for this user." });
+
+            foreach (var item in cart.CartItems)
+            {
+                item.Product = ProductRepo.GetById(item.ProductId);
+            }
+
+
             return Ok(cart);
         }
 

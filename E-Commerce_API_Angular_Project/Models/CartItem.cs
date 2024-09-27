@@ -21,7 +21,7 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-        [JsonIgnore]
+        
         public Product Product { get; set; }
     }
 }
