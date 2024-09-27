@@ -12,6 +12,8 @@ namespace E_Commerce_API_Angular_Project.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public bool? IsDeleted { get; set; }
+
         // Relationships
         public List<Order> Orders { get; set; }
         public List<Review> Reviews { get; set;}
