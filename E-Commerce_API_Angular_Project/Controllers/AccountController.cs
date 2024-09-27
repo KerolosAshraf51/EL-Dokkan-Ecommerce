@@ -90,6 +90,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
                     if (result.Succeeded)
                     {
+                        //isdeleted ? 
+                        user.IsDeleted = false;
+
                         //create cart and favList for user registered
                         var userId =
                            (await userManager.FindByNameAsync(UserFromRequest.UserName)).Id;
@@ -153,8 +156,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     IdentityResult result =
                         await userManager.CreateAsync(user, UserFromRequest.Password);
                     if (result.Succeeded)
-                    {
+                    { 
                         await IUserRoleRepo.AssignRole(user, "admin");
+                        user.IsDeleted = false;
                         return Ok();
                     }
                     foreach (var item in result.Errors)
@@ -175,8 +179,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 //check
                 appUser userFromDb =
                     await userManager.FindByNameAsync(userFRomRequest.UserName);
-                if (userFromDb != null)
+                if (userFromDb != null && userFromDb.IsDeleted == false)
                 {
+                 
                     bool found =
                         await userManager.CheckPasswordAsync(userFromDb, userFRomRequest.Password);
                     if (found == true)

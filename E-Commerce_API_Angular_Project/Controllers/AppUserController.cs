@@ -79,7 +79,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
             appUser.Delete(int.Parse(userId.Value));
             appUser.Save();
-            return Ok("deleted successfully");
+            return Ok();
         }
 
 
