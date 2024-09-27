@@ -22,7 +22,7 @@ namespace E_Commerce_API_Angular_Project.Repository
             message.Body = new TextPart("html")
             {
                 Text = body
-            };
+            };  
 
             using (var client = new SmtpClient())
             {
