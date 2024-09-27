@@ -23,7 +23,7 @@ namespace E_Commerce_API_Angular_Project.Repository
             {
                 Text = body
             };  
-
+              
             using (var client = new SmtpClient())
             {
                 await  client.ConnectAsync("smtp.office365.com", 587, SecureSocketOptions.StartTls);
