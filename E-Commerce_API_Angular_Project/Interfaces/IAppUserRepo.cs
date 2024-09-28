@@ -9,7 +9,7 @@ namespace E_Commerce_API_Angular_Project.IRepository
 
         public void Add(appUser user);
         public void Update(appUser user);
-        public void Delete(int id);
+        public void Delete(appUser user);
         public List<appUser> GetAll();
         public appUser GetById(int id);
         public void Save();

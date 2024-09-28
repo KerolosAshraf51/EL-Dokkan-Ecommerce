@@ -74,12 +74,21 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
         [Authorize]
         [HttpDelete("DeleteProfile")]//Get api/AppUser/DeleteProfile
-        public ActionResult DeleteProfile()
+        public async Task<ActionResult> DeleteProfile(CurrentPasswordDTO currentPassword)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
-            appUser.Delete(int.Parse(userId.Value));
-            appUser.Save();
-            return Ok();
+            var user = appUser.GetById(int.Parse(userId.Value));
+            bool validPass =
+                       await userManager.CheckPasswordAsync(user, currentPassword.Password);
+            if (validPass == true)
+            {
+                appUser.Delete(user);
+                appUser.Save();
+                return Ok();
+            }
+
+            return BadRequest("invalid Password");
+         
         }
 
 

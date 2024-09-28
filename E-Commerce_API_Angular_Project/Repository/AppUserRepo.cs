@@ -19,9 +19,8 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             context.Update(user);
         }
-        public void Delete(int id)
+        public void Delete(appUser user)
         {
-            appUser user = GetById(id);
             user.IsDeleted = true; //soft delete
             Update(user);
         }
