@@ -73,7 +73,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         //delete account
 
         [Authorize]
-        [HttpDelete("DeleteProfile")]//Get api/AppUser/DeleteProfile
+        [HttpPost("DeleteProfile")]//Get api/AppUser/DeleteProfile
         public async Task<ActionResult> DeleteProfile(CurrentPasswordDTO currentPassword)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
@@ -93,29 +93,6 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
        
-
-        //****************Actions for client AppUser****************
-
-        //add product to cart
-
-        //add product to favList
-
-        //add review to product
-
-        // checkout product and confirm order
-
-        //cancel order
-
-
-        //****************Actions for Admin AppUser****************
-
-        //add new category
-
-        //add new product
-
-        //edit product details
-
-        //
 
     }
 }
