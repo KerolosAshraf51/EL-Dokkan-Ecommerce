@@ -92,7 +92,25 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
-       
+        [Authorize(Roles = "admin")]
+        [HttpGet("getAllUsers")]//Get api/AppUser/getAllUsers
+        public ActionResult getAllUsers()
+        {
+            List<appUser> users = appUser.GetAll();
+            List<profileDTO> userData = new List<profileDTO>();
+            profileDTO Data = new profileDTO();
 
+            foreach (var user in users)
+            {
+                Data.UserName = user.UserName;
+                Data.Email = user.Email;
+                Data.Phone = user.PhoneNumber;
+                Data.Address = user.Address;
+                Data.profileImageURL = user.profileImageURL;
+                userData.Add(Data);
+            }
+         
+            return Ok(userData);
+        }
     }
 }
