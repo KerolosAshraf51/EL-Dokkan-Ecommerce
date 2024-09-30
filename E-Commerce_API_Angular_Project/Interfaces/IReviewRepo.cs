@@ -8,6 +8,7 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         public void Delete(int id);
         public List<Review> GetAll();
         public Review GetById(int id);
+        public List<Review> GetByProdId(int prodId);
         public void Save();
     }
 }

@@ -28,8 +28,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
         {
             reviewRepo.Add(review);
             reviewRepo.Save();
-            //return Ok(review);
-            return CreatedAtAction("GetById", new { id = review.Id }, review);
+            return Ok(review);
+            //return CreatedAtAction("GetById", new { id = review.Id }, review);
         }
 
         [HttpGet("{id:int}")]
@@ -38,6 +38,14 @@ namespace E_Commerce_API_Angular_Project.Controllers
             Review review = reviewRepo.GetById(id);
             return Ok(review);
         }
+
+        [HttpGet("reviewsByProdId/{prodId:int}")]
+        public IActionResult GetByUserId(int prodId)
+        {
+            List<Review> reviews = reviewRepo.GetByProdId(prodId);
+            return Ok(reviews);
+        }
+
 
         [HttpDelete("{id:int}")]
         public IActionResult DeleteById(int id)
@@ -48,5 +56,6 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return NoContent();
         }
 
+        
     }
 }
