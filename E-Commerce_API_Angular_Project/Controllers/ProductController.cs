@@ -99,5 +99,21 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(products);
         }
 
+        [HttpPost("increaseQty")]
+        public IActionResult increaseQty(int prodId, int quantity) { 
+            productRepo.IncreaseQty(prodId, quantity);
+            productRepo.Save();
+
+            return Ok();
+        }
+
+        [HttpPost("decreaseQty")]
+        public IActionResult decreaseQty(int prodId, int quantity)
+        {
+            productRepo.DecreaseQty(prodId, quantity);
+            productRepo.Save();
+
+            return Ok();
+        }
     }
 }

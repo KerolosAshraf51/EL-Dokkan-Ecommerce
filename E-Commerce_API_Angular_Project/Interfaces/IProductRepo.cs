@@ -13,6 +13,9 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         public List<Product> OrderBy(string str);
         public List<Product> GetByCategoryId(int categoryId);
         public List<Product> GetByBrandId(int brandId);
+
+        public void IncreaseQty(int prodId, int quantity);
+        public void DecreaseQty(int prodId, int quantity);
         public void Save();
     }
 }

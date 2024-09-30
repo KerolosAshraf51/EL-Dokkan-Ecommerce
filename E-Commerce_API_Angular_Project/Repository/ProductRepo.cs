@@ -1,5 +1,6 @@
 ﻿using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -82,6 +83,28 @@ namespace E_Commerce_API_Angular_Project.Repository
             return context.Products
                 .Where(p => p.BrandId == brandId)
                 .ToList();
+        }
+
+        public void IncreaseQty(int prodId, int quantity)
+        {
+            Product product =  context.Products
+                .FirstOrDefault(p => p.Id == prodId);
+
+            if (product == null) { return; }
+            if (quantity == 0) { return; }
+            
+            product.StockQuantity += quantity;
+        }
+
+        public void DecreaseQty(int prodId, int quantity)
+        {
+            Product product = context.Products
+                .FirstOrDefault(p => p.Id == prodId);
+
+            if (product == null) { return; }
+            if(quantity > product.StockQuantity) { return; }
+
+            product.StockQuantity -= quantity;
         }
     }
 }
