@@ -73,7 +73,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         //delete account
 
         [Authorize]
-        [HttpDelete("DeleteProfile")]//Get api/AppUser/DeleteProfile
+        [HttpPost("DeleteProfile")]//Get api/AppUser/DeleteProfile
         public async Task<ActionResult> DeleteProfile(CurrentPasswordDTO currentPassword)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
@@ -92,30 +92,25 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
-       
+        [Authorize(Roles = "admin")]
+        [HttpGet("getAllUsers")]//Get api/AppUser/getAllUsers
+        public ActionResult getAllUsers()
+        {
+            List<appUser> users = appUser.GetAll();
+            List<profileDTO> userData = new List<profileDTO>();
+            profileDTO Data = new profileDTO();
 
-        //****************Actions for client AppUser****************
-
-        //add product to cart
-
-        //add product to favList
-
-        //add review to product
-
-        // checkout product and confirm order
-
-        //cancel order
-
-
-        //****************Actions for Admin AppUser****************
-
-        //add new category
-
-        //add new product
-
-        //edit product details
-
-        //
-
+            foreach (var user in users)
+            {
+                Data.UserName = user.UserName;
+                Data.Email = user.Email;
+                Data.Phone = user.PhoneNumber;
+                Data.Address = user.Address;
+                Data.profileImageURL = user.profileImageURL;
+                userData.Add(Data);
+            }
+         
+            return Ok(userData);
+        }
     }
 }
