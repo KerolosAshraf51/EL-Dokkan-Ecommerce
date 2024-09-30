@@ -214,7 +214,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                         JwtSecurityToken mytoken = new JwtSecurityToken(
                             audience: config["JWT:AudienceIP"],
                             issuer: config["JWT:IssuerIP"],
-                            expires: DateTime.Now.AddHours(1),
+                            expires: DateTime.Now.AddYears(1),
                             claims: UserClaims,
                             signingCredentials: signingCred
 
@@ -226,6 +226,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
                             token = new JwtSecurityTokenHandler().WriteToken(mytoken),
 
                             expiration = DateTime.Now.AddYears(1)//mytoken.ValidTo
+
+                            ,roles = UserRoles
 
                         });
                     }
