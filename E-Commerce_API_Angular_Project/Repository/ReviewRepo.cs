@@ -37,5 +37,12 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             context.SaveChanges();
         }
+
+        public List<Review> GetByProdId(int prodId)
+        {
+            return context.Reviews
+                .Where(r => r.ProductId == prodId)
+                .ToList();
+        }
     }
 }
