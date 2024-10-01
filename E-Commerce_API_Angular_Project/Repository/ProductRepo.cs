@@ -30,6 +30,7 @@ namespace E_Commerce_API_Angular_Project.Repository
         public List<Product> GetAll()
         {
             return context.Products
+                .Where(p => p.IsDeleted == false)
                 .Include("Reviews")
                 .ToList();
         }

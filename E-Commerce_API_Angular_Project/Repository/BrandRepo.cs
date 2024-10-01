@@ -28,6 +28,7 @@ namespace E_Commerce_API_Angular_Project.Repository
         public List<Brand> GetAll()
         {
             return context.Brands
+                .Where(b => b.IsDeleted == false)
                 .Include("categories")
                 .Include("products")
                 .ToList();
