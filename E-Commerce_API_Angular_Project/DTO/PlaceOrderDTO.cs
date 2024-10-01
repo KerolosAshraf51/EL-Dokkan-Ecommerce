@@ -13,7 +13,9 @@
     }
     public class PlaceOrderDTO
     {
-        public int OrderId { get; set; }
+        //public int OrderId { get; set; }
+        public OrderDTO orderDTO {  get; set; }
+        public int userID { get; set; }
         public BillingDetailsDTO BillingDetails { get; set; }
         public Shipping Shipping { get; set; }
         // public double SubTotal { get; set; }
