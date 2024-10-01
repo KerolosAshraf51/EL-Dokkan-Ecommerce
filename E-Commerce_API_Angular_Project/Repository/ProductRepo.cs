@@ -18,6 +18,7 @@ namespace E_Commerce_API_Angular_Project.Repository
 
         public void Add(Product product)
         {
+            product.IsDeleted = false;
             context.Products.Add(product);
         }
 

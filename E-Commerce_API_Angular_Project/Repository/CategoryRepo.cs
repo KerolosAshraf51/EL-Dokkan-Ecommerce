@@ -15,6 +15,7 @@ namespace E_Commerce_API_Angular_Project.Repository
 
         public void Add(Category category)
         {
+            category.IsDeleted = false;
             context.Add(category);
 
         }

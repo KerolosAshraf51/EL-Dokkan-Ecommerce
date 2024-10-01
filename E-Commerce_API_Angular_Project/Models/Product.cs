@@ -14,8 +14,6 @@ namespace E_Commerce_API_Angular_Project.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
         public double Price { get; set; }
 
-
-
         [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be zero or greater.")]
         public int StockQuantity { get; set; }
         public DateTime CreatedAt { get; set; } 
@@ -33,5 +31,7 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [JsonIgnore]
         public List<Review>? Reviews { get; set; }
+
+        public Boolean IsDeleted { get; set; }
     }
 }

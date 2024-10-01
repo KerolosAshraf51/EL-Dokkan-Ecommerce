@@ -13,5 +13,7 @@ namespace E_Commerce_API_Angular_Project.Models
         [JsonIgnore]
         public List<Product>? products { get; set; }
 
+        public Boolean IsDeleted { get; set; }
+
     }
 }
