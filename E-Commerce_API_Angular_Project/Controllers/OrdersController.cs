@@ -21,15 +21,16 @@ namespace E_Commerce_API_Angular_Project.Controllers
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IMailRepo _mailRepo;
         private readonly ICartRepo _cartRepo;
-        private readonly EcommContext ecommContext;
+       // private readonly EcommContext ecommContext;
+       private readonly IProductRepo _productRepo;
         public OrdersController(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository
-            , EcommContext ecommContext, ICartRepo cartRepo, IMailRepo mailRepo)
+            , ICartRepo cartRepo, IMailRepo mailRepo, IProductRepo productRepo )
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
-            this.ecommContext = ecommContext;
             _mailRepo = mailRepo;
             _cartRepo = cartRepo;
+            _productRepo = productRepo;
         }
 
         [HttpGet("{id}")]
@@ -138,23 +139,23 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
             return Ok(orderWithOrderItemsDTOlist);
         }
-        [HttpPost]
-        [Route("CreateOrder")]
-        public ActionResult CreateOrder(OrderDTO orderDto)
-        {
-            Order order = new Order();
+        //[HttpPost]
+        //[Route("CreateOrder")]
+        //public ActionResult CreateOrder(OrderDTO orderDto)
+        //{
+        //    Order order = new Order();
 
-            order.UserId = orderDto.UserId;
-            order.OrderDate = DateTime.Now;
-            order.UpdatedAt = DateTime.Now;
-            order.TotalAmount = orderDto.TotalAmount; //should calculated by another function
-            order.Status = OrderStatus.Processing;
+        //    order.UserId = orderDto.UserId;
+        //    order.OrderDate = DateTime.Now;
+        //    order.UpdatedAt = DateTime.Now;
+        //    order.TotalAmount = orderDto.TotalAmount; //should calculated by another function
+        //    order.Status = OrderStatus.Processing;
 
-            _orderRepository.AddOrder(order);
-            _orderRepository.Save();
-            return Ok(order);
+        //    _orderRepository.AddOrder(order);
+        //    _orderRepository.Save();
+        //    return Ok(order);
 
-        }
+        //}
         //-------------------------
         [HttpPost]
         [Route("ProceedToCheckout")]
@@ -171,30 +172,34 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
             //get cartItems
             // List<CartItem> cartItems = _ca
-            Order order = new Order
+            OrderDTO orderDTO = new OrderDTO
             {
-                UserId = checkoutDTO.userID,
-                OrderDate = DateTime.Now,
-                UpdatedAt = DateTime.Now,
+                //userID = checkoutDTO.userID,
+                //OrderDate = DateTime.Now,
+                //UpdatedAt = DateTime.Now,
                 TotalAmount = 0,
-                Status = OrderStatus.Processing,
-                PaymentMethod = PaymentMethod.Cash_on_delivery.ToString(),
-                OrderItems = new List<OrderItem>()
+                //Status = OrderStatus.Processing,
+                //PaymentMethod = PaymentMethod.Cash_on_delivery.ToString(),
+                cartItems = checkoutDTO.cartItems
             };
             foreach (var item in checkoutDTO.cartItems)
             {
-                OrderItem orderItem = new OrderItem();
-                orderItem.ProductId = item.ProductId;
-                orderItem.Quantity = item.Quantity;
-                orderItem.PriceAtPurchase = item.Price;
+                //OrderItem orderItem = new OrderItem();
+                //orderItem.ProductId = item.ProductId;
+                //orderItem.Quantity = item.Quantity;
+                //orderItem.PriceAtPurchase = item.Price;
                 
-                order.TotalAmount += (orderItem.Quantity * orderItem.PriceAtPurchase);
-                order.OrderItems.Add(orderItem);
-               }
-            _orderRepository.AddOrder(order);
-            _orderRepository.Save();
+                orderDTO.TotalAmount += (item.Quantity * item.Price);
+                //orderDTO.OrderItems.Add(orderItem);
+            }
+           // OrderDTO orderDTO = new OrderDTO();
+          //  orderDTO.order= order;
+           // _orderRepository.AddOrder(order);
+           // _orderRepository.Save();
             //then clear the cart
-            return Ok(order);
+           // Cart cart = _cartRepo.GetCartByUserId(checkoutDTO.userID);
+           // _cartRepo.ClearCart(cart.Id);
+            return Ok(orderDTO);
 
         }
         [HttpPost]
@@ -204,21 +209,50 @@ namespace E_Commerce_API_Angular_Project.Controllers
             if (placeOrderDTO == null) 
             { return BadRequest(); }
 
-            Order order = _orderRepository.GetOrderById(placeOrderDTO.OrderId);
+            // Order order = _orderRepository.GetOrderById(placeOrderDTO.OrderId);
+            //Order order = placeOrderDTO.orderDTO.order;
+            Order order = new Order
+            {
+                UserId = placeOrderDTO.userID,
+                OrderDate = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                TotalAmount = 0,
+                Status = OrderStatus.Processing,
+                PaymentMethod = PaymentMethod.Cash_on_delivery.ToString(),
+                OrderItems = new List<OrderItem>()
+               // OrderItems = placeOrderDTO.orderDTO.OrderItems
+            };
+            foreach(var item in placeOrderDTO.orderDTO.cartItems)
+            {
+                OrderItem orderItem = new OrderItem();
+                orderItem.ProductId = item.ProductId;
+                orderItem.Quantity = item.Quantity;
+                orderItem.PriceAtPurchase = item.Price;
+
+                order.TotalAmount += (orderItem.Quantity * orderItem.PriceAtPurchase);
+                order.OrderItems.Add(orderItem);
+                _productRepo.DecreaseQty(item.ProductId, item.Quantity);
+            }
+            _orderRepository.AddOrder(order);
+            _orderRepository.Save();
+            //then clear the cart
+             Cart cart = _cartRepo.GetCartByUserId(placeOrderDTO.userID);
+            _cartRepo.ClearCart(cart.Id);
             if (order == null)
             {
                 return BadRequest();
             }
-            order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.PriceAtPurchase);
-            switch (placeOrderDTO.Shipping)
-            {
-                case Shipping.Flat_rate:
-                    order.TotalAmount += 40;
-                    break;
-                case Shipping.Local_pickup:
-                    order.TotalAmount += 30;
-                    break;
-            }
+            
+            //order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.PriceAtPurchase);
+            //switch (placeOrderDTO.Shipping)
+            //{
+            //    case Shipping.Flat_rate:
+            //        order.TotalAmount += 40;
+            //        break;
+            //    case Shipping.Local_pickup:
+            //        order.TotalAmount += 30;
+            //        break;
+            //}
             switch(placeOrderDTO.PaymentMethod)
             {
                 case PaymentMethod.Direct_bank_transfer:
@@ -231,37 +265,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                     order.PaymentMethod=PaymentMethod.Check_payments.ToString();
                     break;
             }
-            order.Status = OrderStatus.Processing;
-
-            _orderRepository.Save();
-
-            //------------------------
-            //try
-            //{
-            //    var email = new MimeMessage();
-            //    email.Sender = MailboxAddress.Parse( "eldokanonlinestore@hotmail.com");
-            //    email.To.Add(MailboxAddress.Parse(placeOrderDTO.BillingDetails.Email));
-            //    email.Subject = "Your Order From ElDokan Site";
-
-            //    var builder = new BodyBuilder();
-            //    builder.HtmlBody = $"Your Order ID is: {placeOrderDTO.OrderId}";
-            //    email.Body = builder.ToMessageBody();
-
-            //    var smtp = new SmtpClient();
-
-            //    //smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            //    //smtp.Authenticate("shaimafarag123@gmail.com", ""); // Replace with your email password
-            //     smtp.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
-            //    smtp.Authenticate("eldokanonlinestore@hotmail.com", "dokan12345");
-            //    smtp.Send(email);
-            //    smtp.Disconnect(true);
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log exception (optional)
-            //    return StatusCode(500, "Error sending email: " + ex.Message);
-            //}
+          
             //string subject = "Your Order From El-Dokan Site";
             //string body = $"Your Order ID is: {placeOrderDTO.OrderId}";
             //_mailRepo.SendEmail(placeOrderDTO.BillingDetails.Email,  subject, body);
@@ -289,6 +293,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 cartItem.Quantity = item.Quantity;
                 cartItem.ProductId = item.ProductId;
                 newCartItems.Add(cartItem);
+                _productRepo.IncreaseQty(item.ProductId, item.Quantity);
             }
             cart.CartItems = newCartItems;
             _orderRepository.Save();
