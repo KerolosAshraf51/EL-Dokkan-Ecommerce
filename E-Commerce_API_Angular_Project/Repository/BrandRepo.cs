@@ -15,6 +15,7 @@ namespace E_Commerce_API_Angular_Project.Repository
 
         public void Add(Brand brand)
         {
+            brand.IsDeleted = false;
             context.Brands.Add(brand);
 
         }

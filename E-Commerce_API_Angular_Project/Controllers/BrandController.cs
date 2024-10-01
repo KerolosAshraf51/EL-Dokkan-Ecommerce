@@ -42,7 +42,10 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteById(int id)
         {
-            brandRepo.Delete(id);
+            Brand brand = brandRepo.GetById(id);
+            brand.IsDeleted = true;
+
+            brandRepo.Update(brand);
             brandRepo.Save();
 
             return NoContent();
