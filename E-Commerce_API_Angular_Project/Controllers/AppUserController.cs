@@ -102,6 +102,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
             foreach (var user in users)
             {
+                Data = new profileDTO();
                 Data.UserName = user.UserName;
                 Data.Email = user.Email;
                 Data.Phone = user.PhoneNumber;
