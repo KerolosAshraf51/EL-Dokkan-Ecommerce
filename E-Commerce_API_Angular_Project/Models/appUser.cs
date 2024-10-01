@@ -13,6 +13,7 @@ namespace E_Commerce_API_Angular_Project.Models
         public DateTime UpdatedAt { get; set; }
 
         public bool? IsDeleted { get; set; }
+        public bool? IsBlocked { get; set; }
 
         // Relationships
         public List<Order> Orders { get; set; }

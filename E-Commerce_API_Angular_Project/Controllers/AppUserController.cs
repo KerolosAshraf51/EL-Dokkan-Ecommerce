@@ -93,6 +93,20 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
 
         [Authorize(Roles = "admin")]
+        [HttpPost("BlockUser")]//Get api/AppUser/BlockUser
+        public async Task<ActionResult> BlockUser(int userId)
+        {
+          
+            var user = appUser.GetById(userId);
+
+                appUser.Block(user);
+                appUser.Save();
+                return Ok();
+
+        }
+
+
+        [Authorize(Roles = "admin")]
         [HttpGet("getAllUsers")]//Get api/AppUser/getAllUsers
         public ActionResult getAllUsers()
         {

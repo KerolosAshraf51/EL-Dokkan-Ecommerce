@@ -24,6 +24,12 @@ namespace E_Commerce_API_Angular_Project.Repository
             user.IsDeleted = true; //soft delete
             Update(user);
         }
+
+        public void Block(appUser user)
+        {
+            user.IsBlocked = true; 
+            Update(user);
+        }
         public List<appUser> GetAll()
         {
             return context.AppUsers.ToList();
