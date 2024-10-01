@@ -2,6 +2,7 @@
 {
     public class profileDTO
     {
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string? profileImageURL { get; set; }
         public string Email { get; set; }
