@@ -33,5 +33,6 @@ namespace E_Commerce_API_Angular_Project.Models
         public List<Review>? Reviews { get; set; }
 
         public Boolean IsDeleted { get; set; }
+        public string ImgUrl { get; set; }
     }
 }
