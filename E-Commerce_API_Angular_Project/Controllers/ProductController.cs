@@ -27,6 +27,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpPost]
         public IActionResult add(Product product)
         {
+            
             productRepo.Add(product);
             productRepo.Save();
             return CreatedAtAction("GetById", new { id = product.Id }, product);
@@ -65,10 +66,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteById(int id)
         {
-            productRepo.Delete(id);
+            Product product = productRepo.GetById(id);
+            product.IsDeleted = true;
+            
+            productRepo.Update(product);
             productRepo.Save();
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpGet("Search/{name:alpha}")]

@@ -43,7 +43,9 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteById(int id)
         {
-            categoryRepo.Delete(id);
+            Category category = categoryRepo.GetById(id);
+            category.IsDeleted = true;
+            categoryRepo.Update(category);
             categoryRepo.Save();
 
             return NoContent();
