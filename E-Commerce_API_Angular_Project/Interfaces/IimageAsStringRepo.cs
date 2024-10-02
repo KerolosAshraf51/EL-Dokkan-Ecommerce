@@ -9,6 +9,8 @@ namespace E_Commerce_API_Angular_Project.Interfaces
         public void Remove(imageAsString imgTest);
 
         public List<imageAsString> getAllImages(int productId);
+
+   
         public void save(); 
 
     }

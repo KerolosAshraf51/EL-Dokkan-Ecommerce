@@ -24,6 +24,8 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             return context.imageAsStrings.Where(i => i.productId == productId).ToList();
         }
+
+  
         public void save()
         {
             context.SaveChanges();

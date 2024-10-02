@@ -81,5 +81,15 @@ namespace E_Commerce_API_Angular_Project.Controllers
             return Ok(new { image = $"data:image/jpeg;base64,{image}" });
 
         }
+
+
+        [HttpGet("getProductImgages")]//Post api/ImageTest/getProductImgages
+        public ActionResult getProductImgages(int productId)
+        {
+            List<imageAsString> images = ImgStringRepo.getAllImages(productId);
+         
+            return Ok(images);
+
+        }
     }
 }
