@@ -43,19 +43,16 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost("addImageList")]//Post api/ImageTest/addImageList
-        public async Task<IActionResult> addImageList([FromForm] List<IFormFile> files, [FromForm] string folderName, [FromBody] int productId)
+        public async Task<IActionResult> addImageList([FromForm] List<IFormFile> files)
         {
             List<string> imageNames;
             imageAsString tempImg;
             IimageAsStringRepo imgRepo;
-            if (string.IsNullOrEmpty(folderName))
-            {
-                return BadRequest("Folder name cannot be empty.");
-            }
+         
 
             try
             {
-                imageNames = await ImageSavingHelper.SaveImagesAsync(files, folderName);
+                imageNames = await ImageSavingHelper.SaveImagesAsync(files, "products");
             }
             catch (Exception ex)
             {
@@ -65,12 +62,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
             foreach(var img in imageNames)
             {
                 tempImg = new imageAsString();
-                tempImg.productId = productId;
+                tempImg.productId = 1;
                 tempImg.Image = img;
                 ImgStringRepo.Add(tempImg);
-                ImgStringRepo.save();
 
             }
+            ImgStringRepo.save();
             return Ok(imageNames);
         }
 
