@@ -9,7 +9,10 @@ namespace E_Commerce_API_Angular_Project.Models
 
 
         [ForeignKey("productImage")]
-        public int productImageId  { get; set; }
+        public int productImageId { get; set; }
         public productImage productImage { get; set; }
     }
+
+
+
 }

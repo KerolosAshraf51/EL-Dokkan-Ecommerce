@@ -4,6 +4,7 @@ using E_Commerce_API_Angular_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce_API_Angular_Project.Migrations
 {
     [DbContext(typeof(EcommContext))]
-    partial class EcommContextModelSnapshot : ModelSnapshot
+    [Migration("20241002013543_imgTest")]
+    partial class imgTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,28 +128,6 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.ImgTest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("ImageData")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ImgTest");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.Order", b =>
@@ -355,7 +336,7 @@ namespace E_Commerce_API_Angular_Project.Migrations
 
                     b.HasIndex("userID");
 
-                    b.ToTable("userOtps");
+                    b.ToTable("UserOtp");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.appUser", b =>
@@ -702,17 +683,6 @@ namespace E_Commerce_API_Angular_Project.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.ImgTest", b =>
-                {
-                    b.HasOne("E_Commerce_API_Angular_Project.Models.appUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.Order", b =>

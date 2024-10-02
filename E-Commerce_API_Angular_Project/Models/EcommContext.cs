@@ -34,6 +34,11 @@ namespace E_Commerce_API_Angular_Project.Models
         public DbSet<Payment> Payments { get; set; }
 
         public DbSet<UserOtp> userOtps { get; set; }
+
+        public DbSet<ImgTest> ImgTest { get; set; }
+
+
+
         public EcommContext(DbContextOptions<EcommContext> options):base(options)
         {
             
