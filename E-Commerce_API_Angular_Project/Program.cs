@@ -79,6 +79,7 @@ namespace E_Commerce_API_Angular_Project
             builder.Services.AddScoped<IUserOtpRepo, UserOtpRepo>();
             builder.Services.AddScoped<IUserRoleRepo,UserRoleRepo>();
             builder.Services.AddScoped<ITestImg, TestImg>();
+            builder.Services.AddScoped<IimageAsStringRepo, ImageAsStringRepo>();
 
 
             #region shaimaa
