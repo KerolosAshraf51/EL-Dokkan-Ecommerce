@@ -45,8 +45,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
         public ActionResult getImg(int userId)
         {
          ImgTest img = imgRepo.getImg(userId);
-           var image = Convert.ToBase64String(img.ImageData); 
-            return Ok(image);
+           var image = Convert.ToBase64String(img.ImageData);
+            return Ok(new { image = $"data:image/jpeg;base64,{image}" });
 
         }
     }
