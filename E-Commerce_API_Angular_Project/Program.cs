@@ -125,8 +125,10 @@ namespace E_Commerce_API_Angular_Project
                 app.UseSwaggerUI();
             }
 
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseCors("MyPolicy");
+
+          
 
             app.UseAuthorization();
 

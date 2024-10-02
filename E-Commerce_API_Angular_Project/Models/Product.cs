@@ -11,13 +11,17 @@ namespace E_Commerce_API_Angular_Project.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
+
         [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
         public double Price { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be zero or greater.")]
         public int StockQuantity { get; set; }
         public DateTime CreatedAt { get; set; } 
-        public DateTime UpdatedAt { get; set; } 
+        public DateTime UpdatedAt { get; set; }
+
+
+      
 
         // Relationships
 
@@ -32,7 +36,9 @@ namespace E_Commerce_API_Angular_Project.Models
         [JsonIgnore]
         public List<Review>? Reviews { get; set; }
 
+        public List<imageAsString>? images { get; set; }
+
         public Boolean IsDeleted { get; set; }
-        public string ImgUrl { get; set; }
+       // public string ImgUrl { get; set; }
     }
 }

@@ -1,5 +1,7 @@
-﻿using E_Commerce_API_Angular_Project.Interfaces;
+﻿using Application.Helpers;
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
+using E_Commerce_API_Angular_Project.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +12,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
     public class ProductController : ControllerBase
     {
         public IProductRepo productRepo { get; }
+        private readonly IimageAsStringRepo ImgStringRepo;
 
-        public ProductController(IProductRepo _productRepo)
+        public ProductController(IProductRepo _productRepo, IimageAsStringRepo _imgRepo)
         {
             productRepo = _productRepo;
+            ImgStringRepo = _imgRepo;
         }
 
 
@@ -25,11 +29,34 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult add(Product product)
+        public async Task< IActionResult> add(Product product, [FromForm] List<IFormFile> files)
         {
             
             productRepo.Add(product);
             productRepo.Save();
+
+            int prodId = product.Id;
+            imageAsString tempImg;
+            List<string> imageNames;
+
+            try
+            {
+                imageNames = await ImageSavingHelper.SaveImagesAsync(files, "products");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            foreach (var img in imageNames)
+            {
+                tempImg = new imageAsString();
+                tempImg.productId = prodId;
+                tempImg.Image = img;
+                ImgStringRepo.Add(tempImg);
+
+            }
+            ImgStringRepo.save();
             return CreatedAtAction("GetById", new { id = product.Id }, product);
         }
 

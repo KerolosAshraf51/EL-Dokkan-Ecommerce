@@ -62,7 +62,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             foreach(var img in imageNames)
             {
                 tempImg = new imageAsString();
-                tempImg.productId = 1;
+                tempImg.productId = 5;
                 tempImg.Image = img;
                 ImgStringRepo.Add(tempImg);
 
