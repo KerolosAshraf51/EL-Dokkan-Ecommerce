@@ -25,25 +25,28 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
 
-        [HttpPost("addPic")]//Post api/AppUser/addPic
-        public ActionResult addPic(picDTO picDTO)
+        [HttpPost("addPic")]//Post api/ImageTest/addPic
+        public async Task<IActionResult> addPic( picDTO pic)
         {
-            ImgTest img = new ImgTest();
-            img.ImageData = picDTO.img;
-            img.UserId = picDTO.UserId;
+           
+                ImgTest img = new ImgTest();
+                img.ImageData = Convert.FromBase64String(pic.ImageData);
+                img.UserId = pic.UserId;
 
-            imgRepo.Add(img);
-            imgRepo.save();
-            return Ok(img);
+                imgRepo.Add(img);
+                 imgRepo.save();
+                return Ok(img);
+          
+       
 
         }
 
-        [HttpGet("getImg")]//Post api/AppUser/addPic
+        [HttpGet("getImg")]//Post api/ImageTest/getImg
         public ActionResult getImg(int userId)
         {
          ImgTest img = imgRepo.getImg(userId);
-
-            return Ok(img);
+           var image = Convert.ToBase64String(img.ImageData); 
+            return Ok(image);
 
         }
     }
