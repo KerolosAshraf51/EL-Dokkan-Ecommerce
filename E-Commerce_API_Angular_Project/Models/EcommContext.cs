@@ -37,6 +37,8 @@ namespace E_Commerce_API_Angular_Project.Models
 
         public DbSet<ImgTest> ImgTest { get; set; }
 
+        public DbSet<imageAsString> imageAsStrings { get; set; }
+
 
 
         public EcommContext(DbContextOptions<EcommContext> options):base(options)

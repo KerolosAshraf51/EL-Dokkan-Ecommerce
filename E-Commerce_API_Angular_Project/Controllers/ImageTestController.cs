@@ -1,4 +1,5 @@
-﻿using E_Commerce_API_Angular_Project.DTO;
+﻿using Application.Helpers;
+using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Migrations;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using imageAsString = E_Commerce_API_Angular_Project.Models.imageAsString;
 
 namespace E_Commerce_API_Angular_Project.Controllers
 {
@@ -16,12 +18,13 @@ namespace E_Commerce_API_Angular_Project.Controllers
     public class ImageTestController : ControllerBase
     {
         private readonly ITestImg imgRepo;
+        private readonly IimageAsStringRepo ImgStringRepo ;
   
 
-        public ImageTestController(ITestImg imgTest)
+        public ImageTestController(ITestImg imgTest, IimageAsStringRepo imgStringRepo)
         {
             imgRepo = imgTest;
-         
+            ImgStringRepo = imgStringRepo;
         }
 
 
@@ -36,10 +39,42 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 imgRepo.Add(img);
                  imgRepo.save();
                 return Ok(img);
-          
-       
 
         }
+
+        [HttpPost("addImageList")]//Post api/ImageTest/addImageList
+        public async Task<IActionResult> addImageList([FromForm] List<IFormFile> files, [FromForm] string folderName, [FromBody] int productId)
+        {
+            List<string> imageNames;
+            imageAsString tempImg;
+            IimageAsStringRepo imgRepo;
+            if (string.IsNullOrEmpty(folderName))
+            {
+                return BadRequest("Folder name cannot be empty.");
+            }
+
+            try
+            {
+                imageNames = await ImageSavingHelper.SaveImagesAsync(files, folderName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            foreach(var img in imageNames)
+            {
+                tempImg = new imageAsString();
+                tempImg.productId = productId;
+                tempImg.Image = img;
+                ImgStringRepo.Add(tempImg);
+                ImgStringRepo.save();
+
+            }
+            return Ok(imageNames);
+        }
+
+
 
         [HttpGet("getImg")]//Post api/ImageTest/getImg
         public ActionResult getImg(int userId)

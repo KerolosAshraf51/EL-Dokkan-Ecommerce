@@ -4,6 +4,7 @@ using E_Commerce_API_Angular_Project.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce_API_Angular_Project.Migrations
 {
     [DbContext(typeof(EcommContext))]
-    partial class EcommContextModelSnapshot : ModelSnapshot
+    [Migration("20241002155652_imageAsString")]
+    partial class imageAsString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -498,12 +501,12 @@ namespace E_Commerce_API_Angular_Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("productId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("productId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("imageAsStrings");
                 });
@@ -865,13 +868,13 @@ namespace E_Commerce_API_Angular_Project.Migrations
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.imageAsString", b =>
                 {
-                    b.HasOne("E_Commerce_API_Angular_Project.Models.Product", "product")
+                    b.HasOne("E_Commerce_API_Angular_Project.Models.appUser", "User")
                         .WithMany()
-                        .HasForeignKey("productId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("product");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("E_Commerce_API_Angular_Project.Models.productImage", b =>
