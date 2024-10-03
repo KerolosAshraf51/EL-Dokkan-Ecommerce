@@ -4,7 +4,7 @@ namespace Application.Helpers
 {
     public static class ImageSavingHelper
     {
-        private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "assets");
+        private static readonly string BasePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
         private static long maxAllowedImageSize =20* 1_048_576;
 
         public static async Task<List<string>> SaveImagesAsync(List<IFormFile> files, string folderName)

@@ -1,4 +1,5 @@
 ﻿using Application.Helpers;
+using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
 using E_Commerce_API_Angular_Project.Repository;
@@ -29,9 +30,18 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost]
-        public async Task< IActionResult> add(Product product, [FromForm] List<IFormFile> files)
+        public async Task< IActionResult> add([FromForm] productDTO productDTO)
         {
-            
+            Product product = new Product();
+            product.Name = productDTO.Name;
+            product.Description = productDTO.Description;
+            product.Price = productDTO.Price;
+            product.StockQuantity = productDTO.StockQuantity;
+            product.BrandId = productDTO.BrandId;
+            product.CategoryId = productDTO.CategoryId;
+            product.CreatedAt = DateTime.Now;
+            product.UpdatedAt= DateTime.Now;
+
             productRepo.Add(product);
             productRepo.Save();
 
@@ -41,7 +51,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
             try
             {
-                imageNames = await ImageSavingHelper.SaveImagesAsync(files, "products");
+                imageNames = await ImageSavingHelper.SaveImagesAsync(productDTO.files, "products");
             }
             catch (Exception ex)
             {
