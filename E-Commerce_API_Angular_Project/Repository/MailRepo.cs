@@ -1,10 +1,7 @@
 ﻿using E_Commerce_API_Angular_Project.Interfaces;
-using MailKit.Security;
-using System;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 
 
@@ -17,7 +14,7 @@ namespace E_Commerce_API_Angular_Project.Repository
         {
             var message = new MimeMessage();
 
-            message.From.Add(new MailboxAddress("EL-DOKAN", "eldokanonlinestore@outlook.com"));
+            message.From.Add(new MailboxAddress("EL-DOKAN", "fernando.hackett@ethereal.email"));
             message.To.Add(new MailboxAddress("", toAddress));
             message.Subject = subject;
 
@@ -30,8 +27,8 @@ namespace E_Commerce_API_Angular_Project.Repository
             {
                 using (var client = new SmtpClient())
                 {
-                    await client.ConnectAsync("smtp.outlook.com", 587, SecureSocketOptions.StartTls);
-                    client.Authenticate("eldokanonlinestore@outlook.com", "melkfqxsapfxprbz");
+                    await client.ConnectAsync("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
+                    client.Authenticate("fernando.hackett@ethereal.email", "Pc38CeGeGABd116Wzz");
                     client.Send(message);
                     client.Disconnect(true);
                 }

@@ -17,11 +17,11 @@ namespace E_Commerce_API_Angular_Project.Models
 
         [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be zero or greater.")]
         public int StockQuantity { get; set; }
-        public DateTime CreatedAt { get; set; } 
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
 
-      
+
 
         // Relationships
 
@@ -39,6 +39,6 @@ namespace E_Commerce_API_Angular_Project.Models
         public List<imageAsString>? images { get; set; }
 
         public Boolean IsDeleted { get; set; }
-       // public string ImgUrl { get; set; }
+        // public string ImgUrl { get; set; }
     }
 }

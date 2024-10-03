@@ -23,7 +23,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpGet]
         public IActionResult getAll()
         {
-            List<Product> products = productRepo.GetAll();
+            List<GetProductDTO> products = productRepo.GetAll();
             return Ok(products);
         }
 
@@ -71,7 +71,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
-            Product product = productRepo.GetById(id);
+            GetProductDTO product = productRepo.GetProductById(id);
             return Ok(product);
         }
 
@@ -113,7 +113,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpGet("Search/{name:alpha}")]
         public IActionResult SearchByName(string name)
         {
-            List<Product> products = productRepo.GetByName(name);
+            List<GetProductDTO> products = productRepo.GetByName(name);
             return Ok(products);
         }
 

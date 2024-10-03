@@ -1,8 +1,7 @@
-﻿using E_Commerce_API_Angular_Project.Interfaces;
+﻿using E_Commerce_API_Angular_Project.DTO;
+using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace E_Commerce_API_Angular_Project.Repository
 {
@@ -28,12 +27,33 @@ namespace E_Commerce_API_Angular_Project.Repository
             context.Products.Remove(product);
         }
 
-        public List<Product> GetAll()
+        public List<GetProductDTO> GetAll()
         {
-            return context.Products
+            var prods = context.Products
                 .Where(p => p.IsDeleted == false)
                 .Include("Reviews")
                 .ToList();
+
+
+            List<GetProductDTO> returnDTO = new List<GetProductDTO>();
+            foreach (Product product in prods)
+            {
+                GetProductDTO productDTO = new GetProductDTO();
+                productDTO.BrandId = product.BrandId;
+                productDTO.IsDeleted = product.IsDeleted;
+                productDTO.images = context.imageAsStrings.Where(img => img.productId == product.Id).Select(img => img.Image).ToList();
+                productDTO.Name = product.Name;
+                productDTO.CategoryId = product.CategoryId;
+                productDTO.Id = product.Id;
+                productDTO.Description = product.Description;
+                productDTO.CreatedAt = product.CreatedAt;
+                productDTO.Price = product.Price;
+                product.UpdatedAt = product.UpdatedAt;
+
+                returnDTO.Add(productDTO);
+            }
+
+            return returnDTO;
         }
 
         public Product GetById(int id)
@@ -41,14 +61,59 @@ namespace E_Commerce_API_Angular_Project.Repository
             return context.Products
                 .Include("Reviews")
                 .FirstOrDefault(p => p.Id == id);
+
         }
 
-        public List<Product> GetByName(string name)
+        public GetProductDTO GetProductById(int id)
         {
-            return context.Products
+
+            Product product = context.Products
+          .Include("Reviews")
+          .FirstOrDefault(p => p.Id == id);
+
+            GetProductDTO returnDTO = new GetProductDTO();
+            returnDTO.BrandId = product.BrandId;
+            returnDTO.IsDeleted = product.IsDeleted;
+            returnDTO.images = context.imageAsStrings.Where(img => img.productId == product.Id).Select(img => img.Image).ToList();
+            returnDTO.Name = product.Name;
+            returnDTO.CategoryId = product.CategoryId;
+            returnDTO.Id = product.Id;
+            returnDTO.Description = product.Description;
+            returnDTO.CreatedAt = product.CreatedAt;
+            returnDTO.Price = product.Price;
+            returnDTO.UpdatedAt = product.UpdatedAt;
+
+
+            return returnDTO;
+
+        }
+
+        public List<GetProductDTO> GetByName(string name)
+        {
+            List<Product> prods = context.Products
                 .Where(p => p.Name.StartsWith(name))
                 .Include("Reviews")
                 .ToList();
+
+            List<GetProductDTO> returnDTO = new List<GetProductDTO>();
+            foreach (Product product in prods)
+            {
+                GetProductDTO productDTO = new GetProductDTO();
+                productDTO.BrandId = product.BrandId;
+                productDTO.IsDeleted = product.IsDeleted;
+                productDTO.images = context.imageAsStrings.Where(img => img.productId == product.Id).Select(img => img.Image).ToList();
+                productDTO.Name = product.Name;
+                productDTO.CategoryId = product.CategoryId;
+                productDTO.Id = product.Id;
+                productDTO.Description = product.Description;
+                productDTO.CreatedAt = product.CreatedAt;
+                productDTO.Price = product.Price;
+                product.UpdatedAt = product.UpdatedAt;
+
+                returnDTO.Add(productDTO);
+            }
+
+            return returnDTO;
         }
         public void Update(Product product)
         {
@@ -65,7 +130,7 @@ namespace E_Commerce_API_Angular_Project.Repository
 
             switch (str)
             {
-                case "Name": return context.Products.OrderBy(p => p.Name).ToList(); 
+                case "Name": return context.Products.OrderBy(p => p.Name).ToList();
                 case "Price": return context.Products.OrderBy(p => p.Price).ToList();
                 case "Quntatity": return context.Products.OrderBy(p => p.StockQuantity).ToList();
 
@@ -89,12 +154,12 @@ namespace E_Commerce_API_Angular_Project.Repository
 
         public void IncreaseQty(int prodId, int quantity)
         {
-            Product product =  context.Products
+            Product product = context.Products
                 .FirstOrDefault(p => p.Id == prodId);
 
             if (product == null) { return; }
             if (quantity == 0) { return; }
-            
+
             product.StockQuantity += quantity;
         }
 
@@ -104,7 +169,7 @@ namespace E_Commerce_API_Angular_Project.Repository
                 .FirstOrDefault(p => p.Id == prodId);
 
             if (product == null) { return; }
-            if(quantity > product.StockQuantity) { return; }
+            if (quantity > product.StockQuantity) { return; }
 
             product.StockQuantity -= quantity;
         }
