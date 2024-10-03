@@ -1,12 +1,9 @@
-﻿using Azure.Core;
-using E_Commerce_API_Angular_Project.DTO;
+﻿using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.IRepository;
 using E_Commerce_API_Angular_Project.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto.Generators;
 using System.Security.Claims;
 
 namespace E_Commerce_API_Angular_Project.Controllers
@@ -18,7 +15,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         private readonly IAppUserRepo appUser;
         private readonly UserManager<appUser> userManager;
 
-        public AppUserController(IAppUserRepo _appuser , UserManager<appUser> userManager)
+        public AppUserController(IAppUserRepo _appuser, UserManager<appUser> userManager)
         {
             appUser = _appuser;
             this.userManager = userManager;
@@ -62,8 +59,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
             user.NormalizedEmail = data.Email.ToUpper();
             user.Address = data.Address;
             user.profileImageURL = data.profileImageURL;
-            user.UpdatedAt= DateTime.Now;
-            
+            user.UpdatedAt = DateTime.Now;
+
             appUser.Update(user);
             appUser.Save();
 
@@ -74,12 +71,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
         [Authorize]
         [HttpPost("DeleteProfile")]//Get api/AppUser/DeleteProfile
-        public async Task<ActionResult> DeleteProfile(CurrentPasswordDTO currentPassword)
+        public async Task<ActionResult> DeleteProfile([FromForm] string currentPassword)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier); // Get the current user's ID
             var user = appUser.GetById(int.Parse(userId.Value));
             bool validPass =
-                       await userManager.CheckPasswordAsync(user, currentPassword.Password);
+                       await userManager.CheckPasswordAsync(user, currentPassword);
             if (validPass == true)
             {
                 appUser.Delete(user);
@@ -88,7 +85,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             }
 
             return BadRequest("invalid Password");
-         
+
         }
 
 
@@ -96,12 +93,12 @@ namespace E_Commerce_API_Angular_Project.Controllers
         [HttpPost("BlockUser")]//Get api/AppUser/BlockUser
         public async Task<ActionResult> BlockUser(int userId)
         {
-          
+
             var user = appUser.GetById(userId);
 
-                appUser.Block(user);
-                appUser.Save();
-                return Ok();
+            appUser.Block(user);
+            appUser.Save();
+            return Ok();
 
         }
 
@@ -125,7 +122,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
                 Data.profileImageURL = user.profileImageURL;
                 userData.Add(Data);
             }
-         
+
             return Ok(userData);
         }
     }
