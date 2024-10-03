@@ -2,8 +2,6 @@
 using E_Commerce_API_Angular_Project.DTO;
 using E_Commerce_API_Angular_Project.Interfaces;
 using E_Commerce_API_Angular_Project.Models;
-using E_Commerce_API_Angular_Project.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Commerce_API_Angular_Project.Controllers
@@ -30,7 +28,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost]
-        public async Task< IActionResult> add([FromForm] productDTO productDTO)
+        public async Task<IActionResult> add([FromForm] productDTO productDTO)
         {
             Product product = new Product();
             product.Name = productDTO.Name;
@@ -40,7 +38,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
             product.BrandId = productDTO.BrandId;
             product.CategoryId = productDTO.CategoryId;
             product.CreatedAt = DateTime.Now;
-            product.UpdatedAt= DateTime.Now;
+            product.UpdatedAt = DateTime.Now;
 
             productRepo.Add(product);
             productRepo.Save();
@@ -67,7 +65,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
 
             }
             ImgStringRepo.save();
-            return CreatedAtAction("GetById", new { id = product.Id }, product);
+            return Ok();
         }
 
         [HttpGet("{id:int}")]
@@ -105,7 +103,7 @@ namespace E_Commerce_API_Angular_Project.Controllers
         {
             Product product = productRepo.GetById(id);
             product.IsDeleted = true;
-            
+
             productRepo.Update(product);
             productRepo.Save();
 
@@ -113,21 +111,21 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpGet("Search/{name:alpha}")]
-        public IActionResult SearchByName(string name) 
+        public IActionResult SearchByName(string name)
         {
             List<Product> products = productRepo.GetByName(name);
             return Ok(products);
         }
 
         [HttpGet("Orderby/{str:alpha}")]
-        public IActionResult Orderby(string str) 
+        public IActionResult Orderby(string str)
         {
-            List<Product> products= productRepo.OrderBy(str);
+            List<Product> products = productRepo.OrderBy(str);
             return Ok(products);
         }
 
         [HttpGet("GetByCategory/{categoryId:int}")]
-        public IActionResult GetByCategory(int categoryId) 
+        public IActionResult GetByCategory(int categoryId)
         {
             List<Product> products = productRepo.GetByCategoryId(categoryId);
             return Ok(products);
@@ -141,7 +139,8 @@ namespace E_Commerce_API_Angular_Project.Controllers
         }
 
         [HttpPost("increaseQty")]
-        public IActionResult increaseQty(int prodId, int quantity) { 
+        public IActionResult increaseQty(int prodId, int quantity)
+        {
             productRepo.IncreaseQty(prodId, quantity);
             productRepo.Save();
 
